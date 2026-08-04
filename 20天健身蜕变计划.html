@@ -723,7 +723,11 @@ section{margin-top:44px}
 
   var KEY_D = 'fit20.days.v1';
   var KEY_R = 'fit20.records.v1';
+  var KEY_C = 'fit20.checkdates.v1';
   var labels = {push:'俯卧撑', squat:'1分钟深蹲', plank:'平板支撑', weight:'体重', waist:'腰围'};
+  function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function loadCheck(){ try { return JSON.parse(localStorage.getItem(KEY_C)) || {}; } catch(e){ return {}; } }
+  function saveCheck(c){ localStorage.setItem(KEY_C, JSON.stringify(c)); }
 
   function loadDays(){ try { return JSON.parse(localStorage.getItem(KEY_D)) || []; } catch(e){ return []; } }
   function saveDays(d){ localStorage.setItem(KEY_D, JSON.stringify(d)); }
@@ -744,7 +748,12 @@ section{margin-top:44px}
     var done = loadDays();
     var i = done.indexOf(n);
     if(i > -1){ done.splice(i,1); } else { done.push(n); }
-    saveDays(done); refresh();
+    saveDays(done);
+    // 打卡日期记录（供全景页判断"今日是否练了"）
+    var cd = loadCheck();
+    if(i > -1){ delete cd[n]; } else { cd[n] = todayStr(); }
+    saveCheck(cd);
+    refresh();
   }
 
   function loadRec(){ try { return JSON.parse(localStorage.getItem(KEY_R)) || {}; } catch(e){ return {}; } }
@@ -798,9 +807,12 @@ section{margin-top:44px}
     _orig();
     try{
       var d = loadDays();
+      var cd = loadCheck();
+      var todayDone = Object.keys(cd).some(function(k){ return cd[k] === todayStr(); });
       localStorage.setItem('seu_fit_summary', JSON.stringify({
-        date: new Date().toISOString().slice(0,10),
-        done: d.length, total: 20, pct: Math.round(d.length/20*100)
+        date: todayStr(),
+        done: d.length, total: 20, pct: Math.round(d.length/20*100),
+        todayDone: todayDone
       }));
     }catch(e){}
   };

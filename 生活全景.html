@@ -154,15 +154,26 @@ function readSummary(key){try{var s=localStorage.getItem(key);if(!s)return null;
 function learnPct(){var o=readSummary('seu_ic_v5_summary');var t=today();if(o&&o.date===t&&o.total>0)return {pct:o.pct,done:o.done,total:o.total};return {pct:0,done:0,total:0};}
 function engPct(){var o=readSummary('seu_cet4_summary');var t=today();if(o&&o.date===t&&o.total>0)return {pct:o.pct,done:o.done,total:o.total};return {pct:0,done:0,total:0};}
 function ring(id,pct,col,txt){var el=document.getElementById(id);el.style.background='conic-gradient('+col+' '+pct*3.6+'deg, #edf2ed 0deg)';el.querySelector('i').textContent=txt;}
+function sportToday(){
+  // 今日运动完成度：跑步(每天)50% + 健身(一三五力量日)50%；休息日健身自动视为完成
+  var d=dayGet(today());
+  var fitS=readSummary('seu_fit_summary');
+  var wd=new Date().getDay();
+  var fitDay=(wd===1||wd===3||wd===5);
+  var fitDone=fitDay ? (!!d.fit||(fitS&&fitS.todayDone)) : true;
+  var runDone=!!d.run;
+  var pct=Math.round((runDone?50:0)+(fitDone?50:0));
+  return {pct:pct, runDone:runDone, fitDone:fitDone, fitDay:fitDay, fitS:fitS};
+}
 function renderRings(){
   var l=learnPct(),e=engPct();
   var d=dayGet(today());
-  var fitS=readSummary('seu_fit_summary');
-  var runPct=(d.run?50:0)+(fitS&&fitS.total>0?Math.round(fitS.pct*0.5):(d.fit?30:0));
+  var sp=sportToday();
   var rp=(d.rise?1:0)+(d.nap?1:0)+(d.sleep?1:0);
   ring('mr-learn',l.pct,'#3d7fa8',l.pct+'%');document.getElementById('src-learn').textContent=l.total>0?('今日 '+l.done+'/'+l.total):'未打开学习页';
   ring('mr-eng',e.pct,'#2f8f6f',e.pct+'%');document.getElementById('src-eng').textContent=e.total>0?('今日 '+e.done+'/'+e.total):'未打开英语页';
-  ring('mr-run',runPct,'#cf7a3f',runPct+'%');document.getElementById('src-run').textContent=(d.run?'跑✓':'跑—')+' · 健身 '+(fitS&&fitS.total>0?(fitS.done+'/'+fitS.total):'未打开健身页');
+  ring('mr-run',sp.pct,'#cf7a3f',sp.pct+'%');
+  document.getElementById('src-run').textContent=(sp.runDone?'跑✓':'跑—')+' · '+(sp.fitDay?(sp.fitDone?'健✓':'健—'):'健✓休');
   ring('mr-rhythm',rp/3*100,'#c9932e',Math.round(rp/3*100)+'%');
 }
 function greenDays(){
@@ -184,15 +195,14 @@ function buildStats(){
   var l=learnPct(),e=engPct();
   var learnOK=l.total>0&&l.pct>=100;
   var engOK=!!(d.eng1||d.eng2);
-  var fitS=readSummary('seu_fit_summary');
-  var sportOK=!!(d.run||(fitS&&fitS.pct>=100));
+  var sp=sportToday();
+  var sportOK=sp.pct>=100;
   var rhythmOK=!!(d.rise&&d.nap&&d.sleep);
   var green=learnOK&&engOK&&sportOK&&rhythmOK;
   var streak=greenDays().length;
   var gd='<div class="st'+(green?' gold':'')+'"><div class="num">'+(green?'★':'—')+'</div><div class="lb">今日全绿</div></div>';
   var sd='<div class="st gold"><div class="num">'+streak+'</div><div class="lb">全绿连击 天</div></div>';
-  var fitS=readSummary('seu_fit_summary');
-  var ld='<div class="st"><div class="num">'+((d.run?'✓':'—')+' / '+((fitS&&fitS.pct>=100)||d.fit?'✓':'—'))+'</div><div class="lb">跑步 / 健身</div></div>';
+  var ld='<div class="st"><div class="num">'+((sp.runDone?'✓':'—')+' / '+(sp.fitDone?'✓':'—'))+'</div><div class="lb">跑步 / 健身</div></div>';
   var rd='<div class="st"><div class="num">'+((d.rise?'起':'·')+(d.nap?'午':'·')+(d.sleep?'睡':'·'))+'</div><div class="lb">起 / 午休 / 睡</div></div>';
   document.getElementById('stats').innerHTML=gd+sd+ld+rd;
 }
