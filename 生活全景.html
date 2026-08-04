@@ -160,7 +160,7 @@ function sportToday(){
   var fitS=readSummary('seu_fit_summary');
   var wd=new Date().getDay();
   var fitDay=(wd===1||wd===3||wd===5);
-  var fitDone=fitDay ? (!!d.fit||(fitS&&fitS.todayDone)) : true;
+  var fitDone = !fitDay || !!(d.fit || (fitS && fitS.todayDone));
   var runDone=!!d.run;
   var pct=Math.round((runDone?50:0)+(fitDone?50:0));
   return {pct:pct, runDone:runDone, fitDone:fitDone, fitDay:fitDay, fitS:fitS};
