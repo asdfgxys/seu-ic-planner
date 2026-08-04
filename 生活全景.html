@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>一日全景 · 生活计划</title>
+<style>
+:root{
+  --bg:#f2f7f3; --card:#ffffff; --card2:#eef3ee; --border:#dde8df; --border2:#c9d9cd;
+  --ink:#26332c; --muted:#6b7a70; --faint:#97a69b;
+  --blue:#3d7fa8; --green:#2f8f6f; --gold:#c9932e; --orange:#cf7a3f; --night:#6a6fb3; --lilac:#9a6fb0;
+  --r:16px; --mono:"Bahnschrift","Consolas",monospace;
+  --shadow:0 3px 12px rgba(40,90,60,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 20px;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.topnav .brand{font-size:15px;font-weight:800;letter-spacing:.02em}
+.topnav .brand small{font-size:10px;color:var(--faint);font-weight:500;margin-left:8px}
+.topnav nav{display:flex;gap:6px;flex-wrap:wrap}
+.topnav a{font-size:12px;color:var(--green);border:1px solid #bcd9c9;background:#e6f3ec;border-radius:99px;padding:3px 13px;text-decoration:none;font-weight:600}
+.topnav a.cur{color:var(--ink);background:var(--card2);border-color:var(--border2)}
+.wrap{max-width:1000px;margin:0 auto;padding:64px 20px 50px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:13.5px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h2 .tag{font-size:10px;font-weight:500;color:var(--muted);background:var(--card2);border-radius:99px;padding:1px 10px}
+.hero{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:center}
+.ringwrap{position:relative;width:240px;height:240px;margin:0 auto}
+.ring{position:absolute;inset:0;border-radius:50%;mask:radial-gradient(closest-side,transparent 76%,#000 77%);-webkit-mask:radial-gradient(closest-side,transparent 76%,#000 77%)}
+.ringmid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}
+.ringmid .now{font-family:var(--mono);font-size:34px;font-weight:800;color:var(--green)}
+.ringmid .act{font-size:12px;color:var(--muted);max-width:160px}
+.ringmid .date{font-size:10.5px;color:var(--faint);margin-bottom:3px}
+.ptr{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--gold);border:3px solid var(--card);box-shadow:0 1px 6px rgba(0,0,0,.15);transform:translate(-50%,-50%)}
+.minis{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.mini{text-align:center;cursor:pointer}
+.mini .mring{width:62px;height:62px;border-radius:50%;position:relative;margin:0 auto}
+.mini .mring i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-family:var(--mono);font-size:11.5px;font-weight:800}
+.mini .lb{font-size:10.5px;color:var(--muted);margin-top:3px;font-weight:600}
+.mini .src{font-size:9px;color:var(--faint)}
+.hint{font-size:11px;color:var(--faint);margin-top:10px;text-align:center}
+.tl{display:flex;flex-direction:column;gap:8px}
+.blk{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 13px;box-shadow:var(--shadow)}
+.blk input{margin-top:4px;width:16px;height:16px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.blk .tm{font-family:var(--mono);font-size:11px;color:var(--faint);width:88px;flex-shrink:0;padding-top:1px}
+.blk .bd{flex:1}
+.blk .bd b{font-size:12.5px}
+.blk .bd .note{font-size:11px;color:var(--muted)}
+.blk .tag{font-size:9.5px;font-weight:800;border-radius:99px;padding:1px 8px;margin-right:5px}
+.tag.learn{color:var(--blue);background:#e8f1f7}.tag.eng{color:var(--green);background:#e5f3ec}.tag.run{color:var(--orange);background:#f8ece2}.tag.fit{color:var(--orange);background:#f8ece2}.tag.rest{color:var(--lilac);background:#f3ecf6}.tag.sleep{color:var(--night);background:#ececf7}.tag.rev{color:var(--gold);background:#f7f0e0}
+.blk.done{opacity:.55}.blk.done .bd b{text-decoration:line-through}
+.grid{display:grid;grid-template-columns:52px repeat(7,1fr);gap:5px;font-size:10px}
+.grid .gh{text-align:center;font-weight:800;color:var(--muted);padding:3px 0}
+.grid .grow{display:flex;align-items:center;color:var(--faint);font-size:9.5px;padding-right:4px}
+.grid .gc{border:1px solid var(--border);border-radius:9px;padding:6px 3px;text-align:center;background:var(--card);color:var(--muted);line-height:1.35}
+.grid .gc b{display:block;font-size:10px;color:var(--ink)}
+.grid .gc.today{border-color:var(--green);background:#e9f5ef;font-weight:600}
+.grid .gc.off{opacity:.45}
+.grid .gc.free{background:var(--card2);color:var(--faint)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.st .num{font-family:var(--mono);font-size:24px;font-weight:800;color:var(--green)}
+.st .lb{font-size:11px;color:var(--muted);margin-top:2px}
+.st.gold .num{color:var(--gold)}
+.foot{text-align:center;font-size:10.5px;color:var(--faint);margin-top:18px}
+.ok{color:var(--green);font-weight:700}
+</style>
+</head>
+<body>
+<header class="topnav">
+  <div class="brand">一日全景 · 生活计划<small>v1.1 · 青绿清新</small></div>
+  <nav><a href="seu-ic-learning-planner.html">学习计划</a><a href="英语四级.html">英语四级</a><a class="cur" href="#">生活全景</a><a href="20天健身蜕变计划.html">健身计划</a></nav>
+</header>
+<div class="wrap">
+
+  <div class="card hero">
+    <div class="ringwrap">
+      <div class="ring" id="ring"></div>
+      <div class="ptr"></div>
+      <div class="ringmid"><div class="date" id="datetxt"></div><div class="now" id="now">—</div><div class="act" id="act">—</div></div>
+    </div>
+    <div>
+      <div class="minis">
+        <div class="mini" title="读自学习计划页"><div class="mring" id="mr-learn"><i>0%</i></div><div class="lb">学习</div><div class="src" id="src-learn">—</div></div>
+        <div class="mini" title="读自英语四级页"><div class="mring" id="mr-eng"><i>0%</i></div><div class="lb">英语</div><div class="src" id="src-eng">—</div></div>
+        <div class="mini"><div class="mring" id="mr-run"><i>0%</i></div><div class="lb">运动</div><div class="src" id="src-run">跑步/健身</div></div>
+        <div class="mini"><div class="mring" id="mr-rhythm"><i>0%</i></div><div class="lb">作息</div><div class="src" id="src-rhythm">起/午休/睡</div></div>
+      </div>
+      <div class="hint">四维进度环 · 学习/英语自动读各计划页进度（同源联动）· 点击时间块打卡</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>今日执行 <span class="tag">勾选即打卡 · 按天保存</span><span class="tag" id="tDone">0/10</span></h2>
+    <div class="tl" id="tl"></div>
+  </div>
+
+  <div class="card">
+    <h2>一周节奏 <span class="tag">跑=跑步 力=力量</span></h2>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>今日四维 <span class="tag">全绿日 = 学习+英语+运动+作息 全达标</span></h2>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="foot">一日全景 v1.1 · 数据存于本机浏览器（seu_pano）· 与学习计划、英语四级、健身计划页互链联动</div>
+</div>
+<script>
+var SEG=[
+  {s:7.5,e:8, c:'#efe3c0', t:'晨光唤醒'},{s:8,e:10.5,c:'#cfe0ec',t:'C++ 块①'},{s:10.5,e:10.75,c:'#e8ede8',t:'休息'},
+  {s:10.75,e:12.25,c:'#d4e8dd',t:'英语块①'},{s:12.25,e:13,c:'#e8ede8',t:'午餐'},{s:13,e:14,c:'#e6d9ea',t:'午休'},
+  {s:14.25,e:16.25,c:'#cfe0ec',t:'C++ 块②'},{s:16.25,e:16.5,c:'#e8ede8',t:'加餐'},{s:16.5,e:17.25,c:'#f2dcc8',t:'跑步 2km'},
+  {s:17.25,e:18,c:'#e8ede8',t:'拉伸洗澡'},{s:18,e:18.75,c:'#e8ede8',t:'晚餐'},{s:18.75,e:19.75,c:'#f2dcc8',t:'健身'},
+  {s:19.75,e:20.5,c:'#d4e8dd',t:'英语块②'},{s:20.5,e:21.5,c:'#e8ede8',t:'自由'},{s:21.5,e:22,c:'#efe3c0',t:'复盘'},
+  {s:22,e:23.5,c:'#dfe0f0',t:'睡前仪式'},{s:23.5,e:7.5,c:'#cdcede',t:'睡眠 8h'}];
+var BLK=[
+  {id:'rise',ix:0,cls:'rest',tag:'晨',t:'起床',n:'见光 10min + 拉伸 5min'},
+  {id:'cpp1',ix:1,cls:'learn',tag:'学',t:'C++ 视频为主',n:'5 个番茄钟'},
+  {id:'eng1',ix:3,cls:'eng',tag:'英',t:'英语词汇+听力',n:'词汇 30min · 听力 45min'},
+  {id:'nap',ix:5,cls:'rest',tag:'休',t:'午休',n:'60min · 充足'},
+  {id:'cpp2',ix:6,cls:'learn',tag:'学',t:'C++ 练习为主',n:'4 个番茄钟'},
+  {id:'run',ix:8,cls:'run',tag:'跑',t:'跑步 2km',n:'边跑边听四级听力'},
+  {id:'fit',ix:11,cls:'fit',tag:'健',t:'健身 · 力量训练',n:'隔天 · 2km 慢跑热身'},
+  {id:'eng2',ix:12,cls:'eng',tag:'英',t:'英语阅读/写作',n:'真题或精读'},
+  {id:'rev',ix:14,cls:'rev',tag:'复',t:'当日复盘',n:'三一 + 四维打卡'},
+  {id:'sleep',ix:15,cls:'sleep',tag:'睡',t:'睡前仪式',n:'无屏 · 23:30 入睡'}];
+var DAYS=['一','二','三','四','五','六','日'];
+var ROWS=[
+  ['晨间','7:30 起','7:30 起','7:30 起','7:30 起','7:30 起','7:30 起','8:00 起'],
+  ['上午','<b>跑</b> + C++','C++','<b>跑</b> + C++','C++','<b>跑</b> + C++','C++','C++ 周复习'],
+  ['午后','<b>力</b> 45min','午休+英语','<b>力</b> 45min','午休+英语','<b>力</b> 45min','午休+英语','自由'],
+  ['傍晚','跑 2km','跑 2km','跑 2km','跑 2km','跑 2km','跑 2km','晨跑 3km'],
+  ['晚间','英语+自由','英语+<b>力</b>','英语+自由','英语+<b>力</b>','英语+自由','英语+<b>力</b>','真题 1 套'],
+  ['深夜','23:30 睡','23:30 睡','23:30 睡','23:30 睡','23:30 睡','23:30 睡','23:30 睡']];
+var LS='seu_pano';
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function load(){try{var s=localStorage.getItem(LS);if(s)return JSON.parse(s);}catch(e){}return {v:1,days:{}};}
+var state=load();
+function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
+function h2n(h,m){return h+(m||0)/60;}
+function segAt(t){for(var i=0;i<SEG.length;i++){var s=SEG[i];var a=h2n(s.s),e=s.e<s.s?24:s.e;if(s.e<s.s){if(t>=a||t<h2n(s.e))return s;}else if(t>=a&&t<h2n(s.e))return s;}return SEG[0];}
+function buildRing(){var stops=[],acc=0;for(var i=0;i<SEG.length;i++){var s=SEG[i];var e=s.e<s.s?24:s.e;stops.push(s.c+' '+(acc/24*360)+'deg '+(e/24*360)+'deg');acc=e;}document.getElementById('ring').style.background='conic-gradient('+stops.join(',')+')';}
+function tick(){var d=new Date();var hh=String(d.getHours()).padStart(2,'0'),mm=String(d.getMinutes()).padStart(2,'0');var t=h2n(d.getHours(),d.getMinutes());var seg=segAt(t);document.getElementById('now').textContent=hh+':'+mm;document.getElementById('act').textContent=seg.t;var ang=(t/24)*360,rad=ang*Math.PI/180,R=117;var p=document.querySelector('.ptr');p.style.left=(50+Math.sin(rad)*R)+'%';p.style.top=(50-Math.cos(rad)*R)+'%';}
+function fmt(s){var t1=Math.floor(s.s),m1=Math.round((s.s-t1)*60),t2=Math.floor(s.e%24),m2=Math.round(((s.e%24)-t2)*60);return String(t1).padStart(2,'0')+':'+String(m1).padStart(2,'0')+'–'+String(t2).padStart(2,'0')+':'+String(m2).padStart(2,'0');}
+function dayGet(d){if(!state.days[d])state.days[d]={};return state.days[d];}
+function isOn(id){return !!dayGet(today())[id];}
+function toggle(id){var d=dayGet(today());if(d[id])delete d[id];else d[id]=true;save();render();}
+function blkHtml(b){var on=isOn(b.id);var s=SEG[b.ix];return '<div class="blk'+(on?' done':'')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggle(\''+b.id+'\')"><span class="tm">'+fmt(s)+'</span><div class="bd"><b><span class="tag '+b.cls+'">'+b.tag+'</span>'+b.t+'</b><div class="note">'+b.n+'</div></div></div>';}
+function buildTL(){document.getElementById('tl').innerHTML=BLK.map(blkHtml).join('');var n=BLK.filter(function(b){return isOn(b.id);}).length;var e=document.getElementById('tDone');if(e)e.textContent=n+'/'+BLK.length+(n===BLK.length?' 🎉':'');}
+function buildGrid(){var h='<div class="grow"></div>'+DAYS.map(function(d){return '<div class="gh">'+d+'</div>';}).join('');var wd=new Date().getDay();var col=wd===0?6:wd-1;ROWS.forEach(function(r,ri){h+='<div class="grow">'+r[0]+'</div>';for(var c=0;c<7;c++){var cls='gc'+(c===col?' today':'')+(ri===5?' off':'');h+='<div class="'+cls+'">'+r[c+1]+'</div>';}});document.getElementById('grid').innerHTML=h;}
+function readSummary(key){try{var s=localStorage.getItem(key);if(!s)return null;var o=JSON.parse(s);return o;}catch(e){return null;}}
+function learnPct(){var o=readSummary('seu_ic_v5_summary');var t=today();if(o&&o.date===t&&o.total>0)return {pct:o.pct,done:o.done,total:o.total};return {pct:0,done:0,total:0};}
+function engPct(){var o=readSummary('seu_cet4_summary');var t=today();if(o&&o.date===t&&o.total>0)return {pct:o.pct,done:o.done,total:o.total};return {pct:0,done:0,total:0};}
+function ring(id,pct,col,txt){var el=document.getElementById(id);el.style.background='conic-gradient('+col+' '+pct*3.6+'deg, #edf2ed 0deg)';el.querySelector('i').textContent=txt;}
+function renderRings(){
+  var l=learnPct(),e=engPct();
+  var d=dayGet(today());
+  var fitS=readSummary('seu_fit_summary');
+  var runPct=(d.run?50:0)+(fitS&&fitS.total>0?Math.round(fitS.pct*0.5):(d.fit?30:0));
+  var rp=(d.rise?1:0)+(d.nap?1:0)+(d.sleep?1:0);
+  ring('mr-learn',l.pct,'#3d7fa8',l.pct+'%');document.getElementById('src-learn').textContent=l.total>0?('今日 '+l.done+'/'+l.total):'未打开学习页';
+  ring('mr-eng',e.pct,'#2f8f6f',e.pct+'%');document.getElementById('src-eng').textContent=e.total>0?('今日 '+e.done+'/'+e.total):'未打开英语页';
+  ring('mr-run',runPct,'#cf7a3f',runPct+'%');document.getElementById('src-run').textContent=(d.run?'跑✓':'跑—')+' · 健身 '+(fitS&&fitS.total>0?(fitS.done+'/'+fitS.total):'未打开健身页');
+  ring('mr-rhythm',rp/3*100,'#c9932e',Math.round(rp/3*100)+'%');
+}
+function greenDays(){
+  var arr=[];
+  for(var i=0;i<30;i++){
+    var d=new Date();d.setDate(d.getDate()-i);
+    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    var day=state.days[ds];if(!day)break;
+    var l=readSummary('seu_ic_v5_summary');
+    var learnOK=(l&&l.date===ds&&l.total>0&&l.pct>=100)||(ds!==today());
+    var engOK=(day.eng1||day.eng2)&&(ds!==today());
+    if(!(day.rise&&day.run&&day.sleep&&(day.eng1||day.eng2)&&learnOK))break;
+    arr.push(ds);
+  }
+  return arr;
+}
+function buildStats(){
+  var d=dayGet(today());
+  var l=learnPct(),e=engPct();
+  var learnOK=l.total>0&&l.pct>=100;
+  var engOK=!!(d.eng1||d.eng2);
+  var fitS=readSummary('seu_fit_summary');
+  var sportOK=!!(d.run||(fitS&&fitS.pct>=100));
+  var rhythmOK=!!(d.rise&&d.nap&&d.sleep);
+  var green=learnOK&&engOK&&sportOK&&rhythmOK;
+  var streak=greenDays().length;
+  var gd='<div class="st'+(green?' gold':'')+'"><div class="num">'+(green?'★':'—')+'</div><div class="lb">今日全绿</div></div>';
+  var sd='<div class="st gold"><div class="num">'+streak+'</div><div class="lb">全绿连击 天</div></div>';
+  var fitS=readSummary('seu_fit_summary');
+  var ld='<div class="st"><div class="num">'+((d.run?'✓':'—')+' / '+((fitS&&fitS.pct>=100)||d.fit?'✓':'—'))+'</div><div class="lb">跑步 / 健身</div></div>';
+  var rd='<div class="st"><div class="num">'+((d.rise?'起':'·')+(d.nap?'午':'·')+(d.sleep?'睡':'·'))+'</div><div class="lb">起 / 午休 / 睡</div></div>';
+  document.getElementById('stats').innerHTML=gd+sd+ld+rd;
+}
+function render(){buildTL();renderRings();buildStats();}
+(function(){
+  var now=new Date();
+  document.getElementById('datetxt').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 '+(now.getDay()===0?'周日':'周'+'一二三四五六'[now.getDay()-1]);
+  buildRing();buildGrid();tick();setInterval(tick,1000);render();
+})();
+</script>
+</body>
+</html>

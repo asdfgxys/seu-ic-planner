@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>英语四级 · CET-4 学习计划</title>
+<style>
+:root{
+  --bg:#f2f7f3; --card:#ffffff; --card2:#eef3ee; --border:#dde8df; --border2:#c9d9cd;
+  --ink:#26332c; --muted:#6b7a70; --faint:#97a69b;
+  --blue:#3d7fa8; --green:#2f8f6f; --gold:#c9932e; --orange:#cf7a3f; --night:#6a6fb3;
+  --r:16px; --mono:"Bahnschrift","Consolas",monospace;
+  --shadow:0 3px 12px rgba(40,90,60,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 20px;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.topnav .brand{font-size:15px;font-weight:800;letter-spacing:.02em}
+.topnav .brand small{font-size:10px;color:var(--faint);font-weight:500;margin-left:8px}
+.topnav nav{display:flex;gap:6px;flex-wrap:wrap}
+.topnav a{font-size:12px;color:var(--green);border:1px solid #bcd9c9;background:#e6f3ec;border-radius:99px;padding:3px 13px;text-decoration:none;font-weight:600}
+.topnav a.cur{color:var(--ink);background:var(--card2);border-color:var(--border2)}
+.wrap{max-width:1000px;margin:0 auto;padding:64px 20px 50px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:13.5px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h2 .tag{font-size:10px;font-weight:500;color:var(--muted);background:var(--card2);border-radius:99px;padding:1px 10px}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.hc{background:var(--card2);border-radius:12px;padding:12px 8px}
+.hc .num{font-family:var(--mono);font-size:26px;font-weight:800;color:var(--green)}
+.hc .lb{font-size:11px;color:var(--muted);margin-top:2px}
+.tl{display:flex;flex-direction:column;gap:8px}
+.blk{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 13px;box-shadow:var(--shadow)}
+.blk input{margin-top:4px;width:16px;height:16px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.blk .bd{flex:1}
+.blk .bd b{font-size:12.5px}
+.blk .bd .note{font-size:11px;color:var(--muted)}
+.blk .tag{font-size:9.5px;font-weight:800;border-radius:99px;padding:1px 8px;margin-right:5px}
+.tag.eng{color:var(--green);background:#e5f3ec}.tag.learn{color:var(--blue);background:#e8f1f7}.tag.run{color:var(--orange);background:#f8ece2}.tag.rev{color:var(--gold);background:#f7f0e0}
+.blk.done{opacity:.55}.blk.done .bd b{text-decoration:line-through}
+.stage{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--card)}
+.stage.cur{border-color:var(--green);background:#e9f5ef}
+.stage .no{font-family:var(--mono);font-weight:800;color:var(--green);width:22px;text-align:center;padding-top:2px}
+.stage .bd b{font-size:12.5px}
+.stage .bd .rng{font-size:10.5px;color:var(--faint);margin-left:8px}
+.stage .bd .goal{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:64px repeat(7,1fr);gap:5px;font-size:10px}
+.grid .gh{text-align:center;font-weight:800;color:var(--muted);padding:3px 0}
+.grid .grow{display:flex;align-items:center;color:var(--faint);font-size:9.5px;padding-right:4px}
+.grid .gc{border:1px solid var(--border);border-radius:9px;padding:6px 3px;text-align:center;background:var(--card);color:var(--muted);line-height:1.35}
+.grid .gc b{display:block;font-size:10px;color:var(--ink)}
+.grid .gc.today{border-color:var(--green);background:#e9f5ef;font-weight:600}
+.grid .gc .sub{font-size:9px;color:var(--faint)}
+table.rec{width:100%;border-collapse:collapse;font-size:12px}
+table.rec th,table.rec td{border:1px solid var(--border);padding:6px 8px;text-align:center}
+table.rec th{background:var(--card2);font-weight:700}
+.inrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.inrow input{border:1px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit;width:110px;background:var(--card)}
+.inrow .btn{border:0;border-radius:99px;background:var(--green);color:#fff;font-weight:700;font-size:12px;padding:7px 16px;cursor:pointer}
+.tip{font-size:11.5px;color:var(--muted);background:var(--card2);border-radius:10px;padding:9px 12px;margin-bottom:7px}
+.foot{text-align:center;font-size:10.5px;color:var(--faint);margin-top:18px}
+</style>
+</head>
+<body>
+<header class="topnav">
+  <div class="brand">英语四级 · CET-4<small>v1.1 · 青绿清新</small></div>
+  <nav><a href="seu-ic-learning-planner.html">学习计划</a><a class="cur" href="#">英语四级</a><a href="生活全景.html">生活全景</a><a href="20天健身蜕变计划.html">健身计划</a></nav>
+</header>
+<div class="wrap">
+
+  <div class="card">
+    <div class="hero">
+      <div class="hc"><div class="num" id="daysLeft">—</div><div class="lb">距 12 月四级考试</div></div>
+      <div class="hc"><div class="num" id="stageName">—</div><div class="lb">当前阶段</div></div>
+      <div class="hc"><div class="num" id="vocabCount">0</div><div class="lb">今日词汇新词数</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>今日任务 <span class="tag">勾选即打卡 · 按天保存</span><span class="tag" id="tDone">0/4</span></h2>
+    <div class="tl" id="tl"></div>
+  </div>
+
+  <div class="card">
+    <h2>阶段路线 <span class="tag">基础好 → 保温 + 应试</span></h2>
+    <div id="stages"></div>
+  </div>
+
+  <div class="card">
+    <h2>每周节奏 <span class="tag">专项分工</span></h2>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>真题追踪 <span class="tag">记录套数 · 算总分</span></h2>
+    <div class="inrow">
+      <input id="rDate" type="date" value="2026-08-04">
+      <input id="rNo" placeholder="第 N 套">
+      <input id="rL" placeholder="听力">
+      <input id="rR" placeholder="阅读">
+      <input id="rW" placeholder="写译">
+      <button class="btn" id="btnAdd">添加记录</button>
+    </div>
+    <table class="rec" id="rec"></table>
+  </div>
+
+  <div class="card">
+    <h2>应试技巧 <span class="tag">五条</span></h2>
+    <div id="tips"></div>
+  </div>
+
+  <div class="foot">英语四级 v1.1 · 数据存于本机浏览器（seu_cet4）· 每日完成度自动同步到生活全景页</div>
+</div>
+<script>
+var DAILY=[{"id": "vocab", "cls": "eng", "tag": "词", "t": "词汇", "n": "40 新词 + 复习 60（间隔复习）"}, {"id": "listen", "cls": "eng", "tag": "听", "t": "听力精听", "n": "30min · 真题听写/跟读"}, {"id": "read", "cls": "learn", "tag": "读", "t": "精读 1 篇", "n": "真题阅读 · 生词入本"}, {"id": "extra", "cls": "run", "tag": "泛", "t": "泛听碎片", "n": "跑步/洗漱时听英文播客"}], STAGES=[{"name": "热身期", "range": "2026-08-04 ~ 08-31", "goal": "词汇第一轮（每日 40 新词 + 间隔复习）· 听力精听入门 · 每日精读 1 篇 · 周末 1 套真题熟悉题型"}, {"name": "提升期", "range": "2026-09-01 ~ 10-31", "goal": "词汇第二轮 + 真题词频 · 分项训练（听力/阅读/写作/翻译）· 每周 2 套分项"}, {"name": "冲刺期", "range": "2026-11-01 ~ 12-18", "goal": "完整套题每周 2 套（计时）· 错题复盘 · 作文模板背诵 · 听力高频场景"}], WEEK=[["周一", "听力专项", "真题听力精听 + 泛听"], ["周二", "阅读专项", "选词/匹配/仔细阅读"], ["周三", "翻译专项", "真题翻译 + 句型积累"], ["周四", "阅读专项", "精读 + 长难句"], ["周五", "听力专项", "新闻听力 + 听写"], ["周六", "写作专项", "作文模板 + 限时写作"], ["周日", "完整套题", "计时 1 套 + 错题复盘"]], TIPS=["听力：播放前抢读选项，锁定关键词（人名/数字/转折词）；精听三步：盲听→看稿→再盲听。", "阅读：选词填空先判词性；段落匹配先读题干划关键词；仔细阅读题干定位原文。", "写作：背 3 套万能模板（现象类/观点类/书信类）+ 高级替换词，字迹工整。", "翻译：直译保底 + 意译加分；地名/机构名提前背熟；长短句结合。", "词汇：利用碎片时间用 APP 刷，重点记高频词与真题词频，不背冷僻词。"];
+var EXAM='2026-12-19';
+var LS='seu_cet4';
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function load(){try{var s=localStorage.getItem(LS);if(s)return JSON.parse(s);}catch(e){}return {v:1,days:{},recs:[]};}
+var state=load();
+function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
+function dayGet(d){if(!state.days[d])state.days[d]={};return state.days[d];}
+function isOn(id){return !!dayGet(today())[id];}
+function toggle(id){var d=dayGet(today());if(d[id])delete d[id];else d[id]=true;save();render();}
+function daysUntil(ex){var a=new Date(),b=new Date(ex+'T00:00:00');return Math.max(0,Math.ceil((b-a)/86400000));}
+function stageOf(){var t=today(),i=0;for(var k=0;k<STAGES.length;k++){if(t>=STAGES[k].range.slice(0,10))i=k;}return i;}
+function blkHtml(b){var on=isOn(b.id);return '<div class="blk'+(on?' done':'')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggle(\''+b.id+'\')"><div class="bd"><b><span class="tag '+b.cls+'">'+b.tag+'</span>'+b.t+'</b><div class="note">'+b.n+'</div></div></div>';}
+function buildTL(){document.getElementById('tl').innerHTML=DAILY.map(blkHtml).join('');var n=DAILY.filter(function(b){return isOn(b.id);}).length;var e=document.getElementById('tDone');if(e)e.textContent=n+'/'+DAILY.length+(n===DAILY.length?' 🎉':'');}
+function buildStages(){var cur=stageOf();document.getElementById('stages').innerHTML=STAGES.map(function(s,i){return '<div class="stage'+(i===cur?' cur':'')+'"><div class="no">'+(i+1)+'</div><div class="bd"><b>'+s.name+'</b><span class="rng">'+s.range+'</span><div class="goal">'+s.goal+'</div></div></div>';}).join('');}
+function buildGrid(){var h='<div class="grow"></div>'+WEEK.map(function(w){return '<div class="gh">'+w[0]+'</div>';}).join('');var wd=new Date().getDay();var col=wd===0?6:wd-1;WEEK.forEach(function(w,i){h+='<div class="grow">'+w[0]+'</div>';for(var c=0;c<7;c++){var cls='gc'+(c===col?' today':'');h+='<div class="'+cls+'">'+(c===i?'<b>'+w[1]+'</b><div class="sub">'+w[2]+'</div>':'<span class="sub">'+(c<i?'✓':'')+'</span>')+'</div>';}});document.getElementById('grid').innerHTML=h;}
+function buildRec(){
+  var rows=state.recs.slice().reverse();
+  var h='<tr><th>日期</th><th>套数</th><th>听力</th><th>阅读</th><th>写译</th><th>总分</th></tr>';
+  if(!rows.length)h+='<tr><td colspan="6" style="color:var(--faint)">暂无记录，完成一套真题后在这里记录</td></tr>';
+  var sum=0;
+  rows.forEach(function(r){var tot=(+r.l||0)+(+r.r||0)+(+r.w||0);sum+=tot;h+='<tr><td>'+r.d+'</td><td>'+r.no+'</td><td>'+(r.l||'-')+'</td><td>'+(r.r||'-')+'</td><td>'+(r.w||'-')+'</td><td><b>'+tot+'</b></td></tr>';});
+  h+='<tr><td colspan="5" style="text-align:right;color:var(--faint)">已做 '+rows.length+' 套 · 平均分</td><td><b>'+Math.round(rows.length?sum/rows.length:0)+'</b></td></tr>';
+  document.getElementById('rec').innerHTML=h;
+}
+function hero(){
+  document.getElementById('daysLeft').textContent=daysUntil(EXAM)+' 天';
+  var cur=stageOf();document.getElementById('stageName').textContent=STAGES[cur].name;
+  var d=dayGet(today());document.getElementById('vocabCount').textContent=d.vocab?40:0;
+}
+function render(){buildTL();buildStages();buildGrid();buildRec();hero();
+  var n=DAILY.filter(function(b){return isOn(b.id);}).length;
+  try{localStorage.setItem('seu_cet4_summary',JSON.stringify({date:today(),done:n,total:DAILY.length,pct:DAILY.length?Math.round(n/DAILY.length*100):100}));}catch(e){}
+}
+document.getElementById('btnAdd').onclick=function(){
+  var d=document.getElementById('rDate').value||today(),no=document.getElementById('rNo').value||('第'+(state.recs.length+1)+'套');
+  var l=document.getElementById('rL').value,r=document.getElementById('rR').value,w=document.getElementById('rW').value;
+  if(!l&&!r&&!w){alert('请至少填一项得分');return;}
+  state.recs.push({d:d,no:no,l:l,r:r,w:w});save();render();
+  ['rNo','rL','rR','rW'].forEach(function(id){document.getElementById(id).value='';});
+};
+render();
+</script>
+</body>
+</html>

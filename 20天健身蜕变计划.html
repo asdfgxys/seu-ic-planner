@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>20 天健身蜕变计划 · 开学前的自我升级</title>
+<style>
+
+:root{
+  --bg:#f2f7f3; --card:#ffffff; --card2:#eef3ee; --border:#dde8df; --border2:#c9d9cd;
+  --ink:#26332c; --muted:#6b7a70; --faint:#97a69b;
+  --blue:#3d7fa8; --green:#2f8f6f; --gold:#c9932e; --orange:#cf7a3f; --night:#6a6fb3; --lilac:#9a6fb0;
+  --r:16px; --mono:"Bahnschrift","Consolas",monospace;
+  --shadow:0 3px 12px rgba(40,90,60,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 20px;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.topnav .brand{font-size:15px;font-weight:800;letter-spacing:.02em}
+.topnav .brand small{font-size:10px;color:var(--faint);font-weight:500;margin-left:8px}
+.topnav nav{display:flex;gap:6px;flex-wrap:wrap}
+.topnav a{font-size:12px;color:var(--green);border:1px solid #bcd9c9;background:#e6f3ec;border-radius:99px;padding:3px 13px;text-decoration:none;font-weight:600}
+.topnav a.cur{color:var(--ink);background:var(--card2);border-color:var(--border2)}
+.wrap{max-width:1000px;margin:0 auto;padding:64px 20px 50px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{text-align:center;padding:22px 18px}
+.hero h1{font-size:20px;font-weight:800}
+.hero .sub{font-size:12.5px;color:var(--muted);margin-top:6px}
+.hp{margin-top:14px;display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+.hp .label{font-size:13px;color:var(--muted)}
+.hp .label b{font-family:var(--mono);font-size:17px;color:var(--green)}
+.bar{width:min(260px,50vw);height:8px;border-radius:99px;background:var(--card2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--green);border-radius:99px;transition:width .5s}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.chips a{font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:4px 12px;text-decoration:none;background:var(--card)}
+.chips a:hover{color:var(--green);border-color:#bcd9c9}
+main{max-width:1000px;margin:0 auto;padding:0 20px 60px}
+section{margin-top:44px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.sec-no{font-family:var(--mono);font-weight:800;font-size:13px;color:var(--green);letter-spacing:.1em}
+.sec-head h2{font-size:21px;font-weight:800;letter-spacing:-.01em}
+.sec-sub{color:var(--muted);font-size:13.5px;margin-bottom:22px;max-width:60em}
+.phase{position:relative;padding-left:28px;margin-top:10px}
+.phase::before{content:"";position:absolute;left:7px;top:10px;bottom:10px;width:2px;background:linear-gradient(180deg,var(--green),var(--border))}
+.phase-head{position:relative;display:flex;align-items:center;gap:12px;margin:32px 0 4px}
+.tag{font-size:10px;font-weight:800;color:var(--green);background:#e5f3ec;border-radius:99px;padding:2px 10px}
+.phase-head h3{font-size:17px;font-weight:800}
+.days{font-size:11px;color:var(--faint);font-family:var(--mono)}
+.phase-goal{color:var(--muted);font-size:13px;margin-bottom:16px}
+.phase-goal b{color:var(--green)}
+.day{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.day.done{opacity:.55}
+.day.done .d-title h4{text-decoration:line-through}
+.day-top{display:flex;gap:14px;align-items:flex-start}
+.d-num{font-family:var(--mono);font-weight:800;font-size:14px;color:var(--green);background:#e5f3ec;border-radius:10px;padding:7px 10px;min-width:46px;text-align:center;flex-shrink:0}
+.d-info{flex:1}
+.d-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.d-title h4{font-size:15px;font-weight:800}
+.pill{font-size:9.5px;font-weight:800;border-radius:99px;padding:1px 8px}
+.pill.force{color:var(--orange);background:#f8ece2}
+.pill.cardio{color:var(--green);background:#e5f3ec}
+.pill.test{color:var(--blue);background:#e8f1f7}
+.pill.recover{color:var(--lilac);background:#f3ecf6}
+.d-meta{font-size:11px;color:var(--faint);margin-top:2px}
+.d-warm{font-size:12px;color:var(--muted);margin-top:7px;background:var(--card2);border-radius:9px;padding:7px 11px}
+.d-warm b{color:var(--ink)}
+.ex-list{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.ex-row{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline;background:var(--card2);border-radius:10px;padding:8px 12px}
+.ex-row .name{font-size:12.5px;font-weight:600}
+.ex-row .name small{color:var(--faint);font-weight:400;margin-left:6px}
+.ex-row .sets{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--green);white-space:nowrap}
+.ex-row .tip{grid-column:1/-1;font-size:11px;color:var(--muted)}
+.ex-row .tip b{color:var(--ink)}
+.d-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:11px;flex-wrap:wrap}
+.d-diet{font-size:12px;color:var(--muted)}
+.d-diet b{color:var(--ink)}
+.checkin{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border2);background:var(--card);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;transition:.15s}
+.checkin:hover{border-color:var(--green)}
+.checkin .box{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--border2);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:transparent}
+.day.done .checkin .box{background:var(--green);border-color:var(--green);color:#fff}
+.records{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rec-col{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+.rec-col h5{font-size:14px;font-weight:800;margin-bottom:2px}
+.when{font-size:11px;color:var(--faint);margin-bottom:8px}
+.rec-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0}
+.rec-row label{font-size:12px;color:var(--muted)}
+.rec-row input{border:1px solid var(--border2);border-radius:8px;padding:6px 10px;width:92px;font-size:12px;font-family:inherit;background:var(--card)}
+.delta{margin-top:14px;background:#e9f5ef;border:1px solid #cfe5d8;border-radius:12px;padding:12px 14px;font-size:12.5px}
+.delta .up{color:var(--green);font-weight:700}
+.delta .down{color:var(--orange);font-weight:700}
+.na{color:var(--faint)}
+.diet-grid,.posture,.lib{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card .no{font-family:var(--mono);font-weight:800;color:var(--green);font-size:13px}
+.card h5{font-size:13.5px;font-weight:800;margin:3px 0 6px}
+.card ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px}
+.card ul li{font-size:12px;color:var(--muted);padding-left:14px;position:relative}
+.card ul li::before{content:"·";position:absolute;left:2px;color:var(--green);font-weight:800}
+.k{font-size:10px;font-weight:800;color:var(--green);background:#e5f3ec;border-radius:99px;padding:1px 8px;margin-right:4px}
+.rep{font-size:10.5px;color:var(--faint);display:block;margin-bottom:4px}
+.card p{font-size:12px;color:var(--muted)}
+.card p b{color:var(--green)}
+.safety{background:#fdf4ea;border:1px solid #f0dcc4;border-radius:12px;padding:14px;font-size:12.5px;color:var(--muted)}
+.safety .mark{display:inline-block;font-size:10px;font-weight:800;color:var(--orange);background:#f8ece2;border-radius:99px;padding:2px 10px;margin-bottom:6px}
+.safety b{color:var(--ink)}
+.safety p{margin-top:4px}
+.foot{text-align:center;font-size:10.5px;color:var(--faint);margin-top:18px}
+.foot .reset{margin-top:10px;border:1px solid var(--border2);background:var(--card);color:var(--muted);border-radius:99px;padding:5px 14px;font-size:11.5px;cursor:pointer}
+.foot .reset:hover{color:var(--orange);border-color:#e8c4a8}
+@media(max-width:760px){.records{grid-template-columns:1fr}.ex-row{grid-template-columns:1fr}.ex-row .sets{grid-column:1}}
+
+</style>
+</head>
+<body>
+<header class="topnav">
+  <div class="brand">20 天健身蜕变<small>v2.0 · 青绿清新</small></div>
+  <nav><a href="seu-ic-learning-planner.html">学习计划</a><a href="英语四级.html">英语四级</a><a href="生活全景.html">生活全景</a><a class="cur" href="#">健身计划</a></nav>
+</header>
+<div class="wrap">
+
+  <div class="card hero">
+    <h1>20 天健身蜕变计划</h1>
+    <p class="sub">开学前的自我升级 · 每天 40–60 分钟，动作标准 > 次数堆砌</p>
+    <div class="hp"><span class="label">打卡进度 <b id="h-count">0</b> / 20 天</span><span class="bar"><i id="h-bar"></i></span></div>
+    <div class="chips"><a href="#phase1">20 天计划</a><a href="#lib">动作库</a><a href="#diet">饮食指南</a><a href="#posture">体态形象</a><a href="#records">数据对比</a><a href="#safety">安全须知</a></div>
+  </div>
+
+<main>
+
+
+  <!-- ================= 阶段一 ================= -->
+  <section id="phase1">
+    <div class="sec-head"><span class="sec-no">PHASE 01</span><h2>适应期 · 第 1–7 天</h2></div>
+    <p class="sec-sub">目标：激活全身、学会动作、建立习惯。强度保守，重点是「标准动作 + 完整热身 + 准时睡觉」。</p>
+    <div class="phase" id="p1">
+
+      <div class="phase-head"><span class="tag">阶段一</span><h3>适应期</h3><span class="days">DAY 1–7</span></div>
+      <p class="phase-goal"><b>激活全身 · 建立习惯。</b>所有动作做到标准即可，组间休息 60–90 秒。7 天不缺席，你已经赢过 80% 的人。</p>
+
+      <!-- D1 -->
+      <div class="day" data-day="1">
+        <div class="day-top">
+          <div class="d-num">D1</div>
+          <div class="d-info">
+            <div class="d-title"><h4>全身激活</h4><span class="pill force">力量</span><span class="pill cardio">有氧</span></div>
+            <div class="d-meta">约 40 分钟 · 强度 ★☆☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 肩绕环 / 体前屈 / 踝膝髋关节活动 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">深蹲 <small>徒手 · 全程控制</small></span><span class="sets">3×15</span><span class="tip"><b>要点：</b>膝盖方向与脚尖一致，下蹲到大腿平行地面，起身时夹紧臀部</span></div>
+          <div class="ex-row"><span class="name">俯卧撑 <small>标准跪姿或标准姿</small></span><span class="sets">3×10</span><span class="tip"><b>要点：</b>身体一条直线，胸口贴近地面再推起，别塌腰</span></div>
+          <div class="ex-row"><span class="name">臀桥</span><span class="sets">3×15</span><span class="tip"><b>要点：</b>顶峰停 1 秒，臀部发力而不是腰</span></div>
+          <div class="ex-row"><span class="name">平板支撑</span><span class="sets">3×40秒</span><span class="tip"><b>要点：</b>收紧核心和臀部，身体保持一条直线</span></div>
+          <div class="ex-row"><span class="name">靠墙静蹲</span><span class="sets">2×40秒</span><span class="tip"><b>要点：</b>后背贴墙，大腿与地面平行，膝盖不超过脚尖</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>早餐必须吃（鸡蛋 + 牛奶/豆浆 + 主食）</span>
+          <button class="checkin" onclick="toggleDay(1)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D2 -->
+      <div class="day" data-day="2">
+        <div class="day-top">
+          <div class="d-num">D2</div>
+          <div class="d-info">
+            <div class="d-title"><h4>上肢 + 核心</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 40 分钟 · 强度 ★☆☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 手腕肩部活动 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">俯卧撑 <small>标准姿</small></span><span class="sets">4×10</span><span class="tip"><b>要点：</b>最后一组力竭前留 2 次余力</span></div>
+          <div class="ex-row"><span class="name">反向划船 <small>矮桌下 / 门框 / 床沿</small></span><span class="sets">3×12</span><span class="tip"><b>要点：</b>身体绷直，用背把胸口拉向桌沿，肩胛先收紧</span></div>
+          <div class="ex-row"><span class="name">卷腹</span><span class="sets">3×15</span><span class="tip"><b>要点：</b>下背贴地，用腹肌卷起肩胛，别用手拽脖子</span></div>
+          <div class="ex-row"><span class="name">超人式</span><span class="sets">3×12</span><span class="tip"><b>要点：</b>俯卧同时抬起手臂和腿，顶峰停 1 秒</span></div>
+          <div class="ex-row"><span class="name">平板支撑</span><span class="sets">3×45秒</span><span class="tip"><b>要点：</b>呼吸保持均匀，不要憋气</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>午餐一掌蛋白质（鸡胸/牛肉/鱼/豆腐）+ 两拳蔬菜</span>
+          <button class="checkin" onclick="toggleDay(2)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D3 -->
+      <div class="day" data-day="3">
+        <div class="day-top">
+          <div class="d-num">D3</div>
+          <div class="d-info">
+            <div class="d-title"><h4>主动恢复</h4><span class="pill recover">恢复</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ☆☆☆</div>
+            <div class="d-warm"><b>今日无力量训练。</b>恢复也是训练的一部分</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">快走 / 轻松散步</span><span class="sets">25分钟</span><span class="tip"><b>要点：</b>可以边走边听播客，心率微微上升即可</span></div>
+          <div class="ex-row"><span class="name">全身拉伸</span><span class="sets">10分钟</span><span class="tip"><b>要点：</b>大腿前侧、胸、肩、背各 30–45 秒</span></div>
+          <div class="ex-row"><span class="name">靠墙站立</span><span class="sets">5分钟</span><span class="tip"><b>要点：</b>后脑勺、肩胛、臀部、脚后跟贴墙，收下巴（体态第一课）</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>今天正常吃，不加餐；喝够 2L 水</span>
+          <button class="checkin" onclick="toggleDay(3)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D4 -->
+      <div class="day" data-day="4">
+        <div class="day-top">
+          <div class="d-num">D4</div>
+          <div class="d-info">
+            <div class="d-title"><h4>下肢 + 有氧</h4><span class="pill force">力量</span><span class="pill cardio">有氧</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 弓步动态拉伸 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">深蹲</span><span class="sets">4×15</span><span class="tip"><b>要点：</b>比 D1 多一组，节奏放慢：下蹲 2 秒，起身 1 秒</span></div>
+          <div class="ex-row"><span class="name">弓步蹲 <small>左右交替</small></span><span class="sets">3×12/腿</span><span class="tip"><b>要点：</b>前膝不超过脚尖，后膝接近地面</span></div>
+          <div class="ex-row"><span class="name">臀桥</span><span class="sets">3×15</span><span class="tip"><b>要点：</b>顶峰夹紧臀部停 1 秒</span></div>
+          <div class="ex-row"><span class="name">靠墙静蹲</span><span class="sets">3×40秒</span><span class="tip"><b>要点：</b>坚持不住就微微抬高一点，别硬撑到发抖</span></div>
+          <div class="ex-row"><span class="name">跳绳 <small>没有绳就原地小跳</small></span><span class="sets">10分钟</span><span class="tip"><b>要点：</b>2 分钟一组 × 5 组，组间休息 30 秒</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>晚餐七分饱，主食换成粗粮（燕麦/红薯/糙米）</span>
+          <button class="checkin" onclick="toggleDay(4)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D5 -->
+      <div class="day" data-day="5">
+        <div class="day-top">
+          <div class="d-num">D5</div>
+          <div class="d-info">
+            <div class="d-title"><h4>全身循环</h4><span class="pill force">力量</span><span class="pill cardio">燃脂</span></div>
+            <div class="d-meta">约 40 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 关节活动 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">循环训练 <small>6 个动作 × 3 轮，每个 40 秒，间歇 20 秒</small></span><span class="sets">3轮</span><span class="tip"><b>顺序：</b>开合跳 → 深蹲 → 俯卧撑 → 登山者 → 平板支撑 → 原地高抬腿</span></div>
+          <div class="ex-row"><span class="name">拉伸放松</span><span class="sets">8分钟</span><span class="tip"><b>要点：</b>重点拉伸腿前侧、胸大肌、背部</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>练后 30 分钟内补一份蛋白质（鸡蛋/牛奶/蛋白粉）</span>
+          <button class="checkin" onclick="toggleDay(5)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D6 -->
+      <div class="day" data-day="6">
+        <div class="day-top">
+          <div class="d-num">D6</div>
+          <div class="d-info">
+            <div class="d-title"><h4>主动恢复</h4><span class="pill recover">恢复</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ☆☆☆</div>
+            <div class="d-warm"><b>今日无力量训练。</b>让肌肉好好长</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">快走 / 轻松散步</span><span class="sets">25分钟</span><span class="tip"><b>要点：</b>或游泳、骑车等低强度活动</span></div>
+          <div class="ex-row"><span class="name">全身拉伸 + 泡沫轴（有的话）</span><span class="sets">10分钟</span><span class="tip"><b>要点：</b>滚腿、滚背，酸痛点停留 30 秒</span></div>
+          <div class="ex-row"><span class="name">靠墙站立</span><span class="sets">5分钟</span><span class="tip"><b>要点：</b>每天坚持，开学后含胸驼背会明显改善</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>今天可以安排一顿「欺骗餐」，但要控制量</span>
+          <button class="checkin" onclick="toggleDay(6)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D7 -->
+      <div class="day" data-day="7">
+        <div class="day-top">
+          <div class="d-num">D7</div>
+          <div class="d-info">
+            <div class="d-title"><h4>基线测试</h4><span class="pill test">测试</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 动态拉伸 5 分钟。测试前充分休息</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">俯卧撑最大次数 <small>标准姿，一次做完</small></span><span class="sets">记录</span><span class="tip"><b>做法：</b>做到力竭，记下数字 → 填到下方「数据对比」</span></div>
+          <div class="ex-row"><span class="name">1 分钟深蹲最大次数</span><span class="sets">记录</span><span class="tip"><b>做法：</b>标准深蹲，1 分钟内尽量多做</span></div>
+          <div class="ex-row"><span class="name">平板支撑最长时间</span><span class="sets">记录</span><span class="tip"><b>做法：</b>做到力竭，记下秒数</span></div>
+          <div class="ex-row"><span class="name">体重 / 腰围 / 正面侧面照片</span><span class="sets">记录</span><span class="tip"><b>做法：</b>同角度同光线拍照，第 20 天对比（照片最能说服自己）</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>正常吃，别为了测试节食，数据才有意义</span>
+          <button class="checkin" onclick="toggleDay(7)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 阶段二 ================= -->
+  <section id="phase2">
+    <div class="sec-head"><span class="sec-no">PHASE 02</span><h2>强化期 · 第 8–14 天</h2></div>
+    <p class="sec-sub">目标：分化训练、逐步加量。推 / 腿 / 拉分开练，每个部位练得更透；组间休息 60 秒。</p>
+    <div class="phase" id="p2">
+
+      <div class="phase-head"><span class="tag">阶段二</span><h3>强化期</h3><span class="days">DAY 8–14</span></div>
+      <p class="phase-goal"><b>分化训练 · 逐步加量。</b>身体已经适应，开始「推拉腿」分化，强度和组数都往上走。</p>
+
+      <!-- D8 -->
+      <div class="day" data-day="8">
+        <div class="day-top">
+          <div class="d-num">D8</div>
+          <div class="d-info">
+            <div class="d-title"><h4>上肢 · 推</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 俯卧撑 1×8（轻） + 肩部绕环</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">俯卧撑 <small>标准姿</small></span><span class="sets">4×12</span><span class="tip"><b>要点：</b>最后一组把脚垫高（床上/凳上），加大难度</span></div>
+          <div class="ex-row"><span class="name">钻石俯卧撑 <small>练三头</small></span><span class="sets">3×8</span><span class="tip"><b>要点：</b>双手拇指食指相触成菱形，肘部贴近身体</span></div>
+          <div class="ex-row"><span class="name">派克俯卧撑 <small>练肩</small></span><span class="sets">3×8</span><span class="tip"><b>要点：</b>臀部抬高呈倒 V，头顶朝下靠近地面，做不了就做宽距俯卧撑</span></div>
+          <div class="ex-row"><span class="name">凳上臂屈伸 <small>椅子/床边</small></span><span class="sets">3×12</span><span class="tip"><b>要点：</b>手撑身后，屈肘下降至大臂平行地面，肩胛收紧别耸肩</span></div>
+          <div class="ex-row"><span class="name">平板支撑</span><span class="sets">3×45秒</span><span class="tip"><b>要点：</b>收腹提臀，别塌腰</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>蛋白质加到每公斤体重 1.3g（约 70–90g/天：3 个鸡蛋 + 一掌肉 + 一杯奶）</span>
+          <button class="checkin" onclick="toggleDay(8)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D9 -->
+      <div class="day" data-day="9">
+        <div class="day-top">
+          <div class="d-num">D9</div>
+          <div class="d-info">
+            <div class="d-title"><h4>下肢</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 弓步动态拉伸 + 徒手深蹲 1×10（轻）</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">深蹲</span><span class="sets">4×20</span><span class="tip"><b>要点：</b>次数上来了，动作更要注意稳定</span></div>
+          <div class="ex-row"><span class="name">弓步蹲 <small>左右交替</small></span><span class="sets">4×12/腿</span><span class="tip"><b>要点：</b>可以双手提两瓶水增加负重</span></div>
+          <div class="ex-row"><span class="name">臀桥</span><span class="sets">4×15</span><span class="tip"><b>要点：</b>最后一组单腿臀桥 10 次/侧，感受臀大肌孤立发力</span></div>
+          <div class="ex-row"><span class="name">靠墙静蹲</span><span class="sets">3×60秒</span><span class="tip"><b>要点：</b>每次比 D4 多 20 秒，这就是进步</span></div>
+          <div class="ex-row"><span class="name">提踵 <small>练小腿线条</small></span><span class="sets">3×20</span><span class="tip"><b>要点：</b>顶峰停 1 秒，慢落</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>练腿日碳水可以多吃一点（练前加半根香蕉或一片全麦）</span>
+          <button class="checkin" onclick="toggleDay(9)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D10 -->
+      <div class="day" data-day="10">
+        <div class="day-top">
+          <div class="d-num">D10</div>
+          <div class="d-info">
+            <div class="d-title"><h4>主动恢复</h4><span class="pill recover">恢复</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ☆☆☆</div>
+            <div class="d-warm"><b>今日无力量训练。</b>走走路、晒晒太阳</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">快走 / 轻松活动</span><span class="sets">25分钟</span><span class="tip"><b>要点：</b>约朋友散步，把习惯融入生活</span></div>
+          <div class="ex-row"><span class="name">全身拉伸</span><span class="sets">10分钟</span><span class="tip"><b>要点：</b>今天重点：大腿前侧（弓步压）和小腿</span></div>
+          <div class="ex-row"><span class="name">靠墙站立</span><span class="sets">5分钟</span><span class="tip"><b>要点：</b>顺便练「目视前方 + 微笑」——开学打招呼的自信姿态</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>保持蛋白质摄入稳定，零食换成坚果/水果</span>
+          <button class="checkin" onclick="toggleDay(10)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D11 -->
+      <div class="day" data-day="11">
+        <div class="day-top">
+          <div class="d-num">D11</div>
+          <div class="d-info">
+            <div class="d-title"><h4>上肢 · 拉 + 核心</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 肩胛环绕 + 弹力带/毛巾扩胸 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">反向划船 <small>矮桌/门框/床沿</small></span><span class="sets">4×12</span><span class="tip"><b>要点：</b>身体越接近水平越难；肩胛先下沉再拉</span></div>
+          <div class="ex-row"><span class="name">超人式</span><span class="sets">4×12</span><span class="tip"><b>要点：</b>顶峰停 1 秒，感受下背和臀部收紧</span></div>
+          <div class="ex-row"><span class="name">俯身 YW 字 <small>空手或两瓶水</small></span><span class="sets">3×12</span><span class="tip"><b>要点：</b>俯身 45°，手臂先 Y 后 W 夹背，改善圆肩的关键动作</span></div>
+          <div class="ex-row"><span class="name">卷腹</span><span class="sets">4×15</span><span class="tip"><b>要点：</b>起的时候呼气，落的时候吸气</span></div>
+          <div class="ex-row"><span class="name">侧平板支撑 <small>左右各</small></span><span class="sets">3×30秒/侧</span><span class="tip"><b>要点：</b>臀部收紧，身体不前后晃</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>晚餐：一掌蛋白质 + 两拳蔬菜 + 一拳粗粮主食</span>
+          <button class="checkin" onclick="toggleDay(11)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D12 -->
+      <div class="day" data-day="12">
+        <div class="day-top">
+          <div class="d-num">D12</div>
+          <div class="d-info">
+            <div class="d-title"><h4>下肢 + 燃脂</h4><span class="pill force">力量</span><span class="pill cardio">有氧</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 动态拉伸 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">深蹲</span><span class="sets">4×20</span><span class="tip"><b>要点：</b>最后 5 次可以放慢离心（下蹲 3 秒）</span></div>
+          <div class="ex-row"><span class="name">箭步蹲 <small>向前跨步</small></span><span class="sets">3×12/腿</span><span class="tip"><b>要点：</b>跨步大一点，前脚全脚掌踩实</span></div>
+          <div class="ex-row"><span class="name">波比跳 <small>简化版可不俯卧撑</small></span><span class="sets">3×10</span><span class="tip"><b>要点：</b>动作连贯，膝盖不适就改成「站-蹲-站」</span></div>
+          <div class="ex-row"><span class="name">跳绳</span><span class="sets">12分钟</span><span class="tip"><b>要点：</b>2 分钟 × 6 组，组间休息 30 秒</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>全天戒含糖饮料；奶茶最多一周一次且选无糖</span>
+          <button class="checkin" onclick="toggleDay(12)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D13 -->
+      <div class="day" data-day="13">
+        <div class="day-top">
+          <div class="d-num">D13</div>
+          <div class="d-info">
+            <div class="d-title"><h4>主动恢复</h4><span class="pill recover">恢复</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ☆☆☆</div>
+            <div class="d-warm"><b>今日无力量训练。</b>过半了，奖励自己好好睡一觉</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">快走 / 轻松活动</span><span class="sets">25分钟</span><span class="tip"><b>要点：</b>或打一场球、游一次泳</span></div>
+          <div class="ex-row"><span class="name">全身拉伸</span><span class="sets">10分钟</span><span class="tip"><b>要点：</b>今天重点：臀部（4 字拉伸）和胸椎</span></div>
+          <div class="ex-row"><span class="name">靠墙站立</span><span class="sets">5分钟</span><span class="tip"><b>要点：</b>坚持一周，肩颈打开的感觉会很明显</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>多喝水 + 早睡（23:30 前），恢复比练更重要</span>
+          <button class="checkin" onclick="toggleDay(13)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D14 -->
+      <div class="day" data-day="14">
+        <div class="day-top">
+          <div class="d-num">D14</div>
+          <div class="d-info">
+            <div class="d-title"><h4>全身综合 + 中期测试</h4><span class="pill force">力量</span><span class="pill test">测试</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 关节活动 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">循环训练 <small>5 动作 × 4 轮，45 秒 / 间歇 15 秒</small></span><span class="sets">4轮</span><span class="tip"><b>顺序：</b>深蹲 → 俯卧撑 → 弓步蹲 → 登山者 → 平板支撑</span></div>
+          <div class="ex-row"><span class="name">重测俯卧撑 & 平板支撑</span><span class="sets">记录</span><span class="tip"><b>对比：</b>和 D7 比一比，大概率已经涨了——更新下方「数据对比」</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>阶段总结：拍照 + 量腰围，记录变化</span>
+          <button class="checkin" onclick="toggleDay(14)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 阶段三 ================= -->
+  <section id="phase3">
+    <div class="sec-head"><span class="sec-no">PHASE 03</span><h2>冲刺期 · 第 15–20 天</h2></div>
+    <p class="sec-sub">目标：强度拉满、燃烧脂肪、线条显现。组间休息 45–60 秒，动作质量依然是第一位。</p>
+    <div class="phase" id="p3">
+
+      <div class="phase-head"><span class="tag">阶段三</span><h3>冲刺期</h3><span class="days">DAY 15–20</span></div>
+      <p class="phase-goal"><b>强度拉满 · 出线条。</b>最后一周，组数次数全线上调，让肩背、腰腹、腿部线条在开学前显现。</p>
+
+      <!-- D15 -->
+      <div class="day" data-day="15">
+        <div class="day-top">
+          <div class="d-num">D15</div>
+          <div class="d-info">
+            <div class="d-title"><h4>上肢 · 推（强度+）</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 轻俯卧撑 1×10 + 肩部活动</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">俯卧撑 <small>标准姿</small></span><span class="sets">5×15</span><span class="tip"><b>要点：</b>做不到 15 次就做 10 次×5 组，总量优先</span></div>
+          <div class="ex-row"><span class="name">钻石俯卧撑</span><span class="sets">3×10</span><span class="tip"><b>要点：</b>三头肌线条就靠它</span></div>
+          <div class="ex-row"><span class="name">派克俯卧撑</span><span class="sets">3×10</span><span class="tip"><b>要点：</b>肩部饱满度 + 体态的关键动作</span></div>
+          <div class="ex-row"><span class="name">凳上臂屈伸</span><span class="sets">3×15</span><span class="tip"><b>要点：</b>肘部向后而不是向两侧打开</span></div>
+          <div class="ex-row"><span class="name">平板支撑</span><span class="sets">4×60秒</span><span class="tip"><b>要点：</b>60 秒 × 4 组，组间休息 45 秒</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>睡前 2 小时不进食；蛋白质依旧管够</span>
+          <button class="checkin" onclick="toggleDay(15)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D16 -->
+      <div class="day" data-day="16">
+        <div class="day-top">
+          <div class="d-num">D16</div>
+          <div class="d-info">
+            <div class="d-title"><h4>下肢（强度+）</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 弓步动态拉伸 + 轻深蹲 1×10</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">深蹲</span><span class="sets">5×20</span><span class="tip"><b>要点：</b>每组做到「还有 2 次余力」的程度</span></div>
+          <div class="ex-row"><span class="name">保加利亚分腿蹲 <small>后脚搭凳</small></span><span class="sets">3×10/腿</span><span class="tip"><b>要点：</b>单腿之王，练臀腿线条见效最快；扶墙保持平衡</span></div>
+          <div class="ex-row"><span class="name">臀桥</span><span class="sets">4×20</span><span class="tip"><b>要点：</b>顶峰停 1 秒，感受臀部燃烧</span></div>
+          <div class="ex-row"><span class="name">靠墙静蹲</span><span class="sets">3×75秒</span><span class="tip"><b>要点：</b>大腿股四头肌线条 + 膝盖稳定</span></div>
+          <div class="ex-row"><span class="name">提踵</span><span class="sets">4×25</span><span class="tip"><b>要点：</b>慢起慢落，小腿更紧致</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>练前 1 小时加一根香蕉；练后补蛋白</span>
+          <button class="checkin" onclick="toggleDay(16)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D17 -->
+      <div class="day" data-day="17">
+        <div class="day-top">
+          <div class="d-num">D17</div>
+          <div class="d-info">
+            <div class="d-title"><h4>HIIT 燃脂日</h4><span class="pill cardio">燃脂</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ★★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 原地慢跑 3 分钟（充分热身再上强度）</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">Tabata 循环 <small>20 秒全力 + 40 秒休息 × 10 轮</small></span><span class="sets">10轮</span><span class="tip"><b>动作轮换：</b>开合跳 → 深蹲跳 → 登山者 → 波比跳 → 高抬腿（循环两遍）</span></div>
+          <div class="ex-row"><span class="name">拉伸放松</span><span class="sets">8分钟</span><span class="tip"><b>要点：</b>今天心率高，拉伸时间也要给足</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>全天多喝水（2.5L），蔬菜吃到两拳/餐</span>
+          <button class="checkin" onclick="toggleDay(17)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D18 -->
+      <div class="day" data-day="18">
+        <div class="day-top">
+          <div class="d-num">D18</div>
+          <div class="d-info">
+            <div class="d-title"><h4>上肢 · 拉 + 核心（强度+）</h4><span class="pill force">力量</span></div>
+            <div class="d-meta">约 45 分钟 · 强度 ★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 肩胛环绕 + 扩胸 5 分钟</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">反向划船</span><span class="sets">5×12</span><span class="tip"><b>要点：</b>脚越垫越高难度越大，背阔肌发力</span></div>
+          <div class="ex-row"><span class="name">超人式</span><span class="sets">4×15</span><span class="tip"><b>要点：</b>下背和竖脊肌，久坐人群的救星</span></div>
+          <div class="ex-row"><span class="name">俯身 YW 字</span><span class="sets">3×15</span><span class="tip"><b>要点：</b>改善圆肩驼背，开学体态就靠它</span></div>
+          <div class="ex-row"><span class="name">卷腹</span><span class="sets">4×20</span><span class="tip"><b>要点：</b>腹肌线条的最后冲刺</span></div>
+          <div class="ex-row"><span class="name">侧平板支撑 <small>左右各</small></span><span class="sets">3×40秒/侧</span><span class="tip"><b>要点：</b>练出腰侧线条</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>饮食结构不变：蛋白 + 粗粮 + 蔬菜，少油少糖</span>
+          <button class="checkin" onclick="toggleDay(18)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D19 -->
+      <div class="day" data-day="19">
+        <div class="day-top">
+          <div class="d-num">D19</div>
+          <div class="d-info">
+            <div class="d-title"><h4>全身大挑战</h4><span class="pill force">力量</span><span class="pill cardio">燃脂</span></div>
+            <div class="d-meta">约 50 分钟 · 强度 ★★★★</div>
+            <div class="d-warm"><b>热身：</b>开合跳 2×30 秒 + 动态拉伸 5 分钟，今天要给 100%</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">5 动作 × 5 轮 <small>45 秒尽力 + 15 秒休息</small></span><span class="sets">5轮</span><span class="tip"><b>顺序：</b>深蹲 → 俯卧撑 → 登山者 → 弓步蹲 → 平板支撑</span></div>
+          <div class="ex-row"><span class="name">拉伸放松</span><span class="sets">10分钟</span><span class="tip"><b>要点：</b>明天休息，彻底放松</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>饮食：</b>最后一天训练，正常吃，保证睡眠</span>
+          <button class="checkin" onclick="toggleDay(19)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+
+      <!-- D20 -->
+      <div class="day" data-day="20">
+        <div class="day-top">
+          <div class="d-num">D20</div>
+          <div class="d-info">
+            <div class="d-title"><h4>复盘日 · 见证变化</h4><span class="pill test">测试</span><span class="pill recover">恢复</span></div>
+            <div class="d-meta">约 30 分钟 · 强度 ★★☆</div>
+            <div class="d-warm"><b>今天不冲强度。</b>用数据说话，然后好好休息</div>
+          </div>
+        </div>
+        <div class="ex-list">
+          <div class="ex-row"><span class="name">终测：俯卧撑 / 深蹲 / 平板支撑</span><span class="sets">记录</span><span class="tip"><b>对比：</b>全部重测一遍，填进「数据对比」，看看 20 天的成果</span></div>
+          <div class="ex-row"><span class="name">拍照 + 量腰围体重</span><span class="sets">记录</span><span class="tip"><b>对比：</b>和 D7 同角度同光线，拼在一起看</span></div>
+          <div class="ex-row"><span class="name">轻量活动 + 拉伸</span><span class="sets">20分钟</span><span class="tip"><b>要点：</b>散散步，拉伸放松，庆祝完成</span></div>
+        </div>
+        <div class="d-foot">
+          <span class="d-diet"><b>接下来：</b>开学后保持每周 3–4 练，把「阶段三」的强度当作日常基线，你已经在大学起跑线前领先了。</span>
+          <button class="checkin" onclick="toggleDay(20)"><span class="box">✓</span>打卡完成</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 动作库 ================= -->
+  <section id="lib">
+    <div class="sec-head"><span class="sec-no">LIBRARY</span><h2>动作库 · 标准姿势速查</h2></div>
+    <p class="sec-sub">练对才有用。每个动作记住一个关键点，姿势标准 > 次数堆砌。</p>
+    <div class="lib">
+      <div class="card"><h5>深蹲 Squat</h5><span class="rep">目标：大腿 / 臀部</span><p>脚与肩同宽，<b>膝盖与脚尖同方向</b>，下蹲至大腿平行地面，起身夹臀。全程腰背挺直。</p></div>
+      <div class="card"><h5>俯卧撑 Push-up</h5><span class="rep">目标：胸 / 肩 / 三头</span><p>身体一条直线，<b>胸口贴近地面</b>，手在肩正下方略宽于肩。塌腰 = 无效。</p></div>
+      <div class="card"><h5>弓步蹲 Lunge</h5><span class="rep">目标：臀 / 腿</span><p>跨步大、重心在两腿之间，<b>前膝不超过脚尖</b>，后膝轻触地面。交替进行。</p></div>
+      <div class="card"><h5>平板支撑 Plank</h5><span class="rep">目标：核心</span><p>肘在肩正下方，<b>收腹提臀</b>，身体像一块木板。塌腰或撅臀都会前功尽弃。</p></div>
+      <div class="card"><h5>反向划船 Inverted Row</h5><span class="rep">目标：背部</span><p>身体绷直挂在桌沿/门框下，<b>先夹肩胛再拉</b>，把胸口拉向支撑物。背部变宽的关键。</p></div>
+      <div class="card"><h5>臀桥 Glute Bridge</h5><span class="rep">目标：臀部</span><p>仰卧屈膝，<b>臀部发力顶起</b>，顶峰夹紧停 1 秒。用臀不用腰。</p></div>
+      <div class="card"><h5>靠墙静蹲 Wall Sit</h5><span class="rep">目标：大腿 / 膝盖稳定</span><p>后背贴墙滑下，<b>大腿平行地面</b>，膝盖 90°。抖就对了，坚持到时间结束。</p></div>
+      <div class="card"><h5>超人式 Superman</h5><span class="rep">目标：下背 / 臀部</span><p>俯卧同时抬手臂和腿，<b>顶峰停 1 秒</b>，像超人飞行。久坐救星。</p></div>
+      <div class="card"><h5>钻石俯卧撑 Diamond Push-up</h5><span class="rep">目标：三头</span><p>双手拇指食指相触成菱形，<b>肘部贴近身体</b>。练手臂线条最狠。</p></div>
+      <div class="card"><h5>派克俯卧撑 Pike Push-up</h5><span class="rep">目标：肩部</span><p>臀部抬高呈倒 V，<b>头顶朝下靠近地面</b>。肩膀变饱满、体态变挺的关键。</p></div>
+      <div class="card"><h5>保加利亚分腿蹲 Bulgarian Split Squat</h5><span class="rep">目标：臀腿线条</span><p>后脚搭在凳上，<b>前腿单腿下蹲</b>，扶墙保持平衡。练线条效率最高。</p></div>
+      <div class="card"><h5>登山者 Mountain Climber</h5><span class="rep">目标：核心 / 燃脂</span><p>俯撑姿势，<b>双腿交替快速提膝</b>，像原地爬山。核心和心率一起炸。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 饮食 ================= -->
+  <section id="diet">
+    <div class="sec-head"><span class="sec-no">FUEL</span><h2>饮食指南 · 吃对比练狠更重要</h2></div>
+    <p class="sec-sub">三分练七分吃。不需要节食，只需要结构正确。20 天坚持以下五条，效果翻倍。</p>
+    <div class="diet-grid">
+      <div class="card"><span class="no">01</span><h5>蛋白质管够</h5><ul>
+        <li>每天 1.2–1.5g / 公斤体重（约 70–90g）</li>
+        <li>来源：鸡蛋 3–4 个、鸡胸/牛肉/鱼一掌、牛奶或豆浆一杯</li>
+        <li>每餐都要有蛋白，练后 30 分钟内补一份</li>
+      </ul></div>
+      <div class="card"><span class="no">02</span><h5>主食粗细搭配</h5><ul>
+        <li>每餐一拳主食：燕麦、红薯、糙米、全麦面包</li>
+        <li>训练日多吃一点，休息日正常量</li>
+        <li>白米饭可以吃，但把一半换成粗粮</li>
+      </ul></div>
+      <div class="card"><span class="no">03</span><h5>蔬菜两拳起步</h5><ul>
+        <li>每餐两拳蔬菜，深绿色优先</li>
+        <li>水果一天 1–2 份，别当饭吃</li>
+        <li>戒含糖饮料；奶茶最多一周一次、选无糖</li>
+      </ul></div>
+      <div class="card"><span class="no">04</span><h5>水与睡眠</h5><ul>
+        <li>每天 2–2.5L 水，训练日多喝</li>
+        <li>睡够 7–8 小时，23:30 前上床</li>
+        <li>肌肉在睡眠中生长，熬夜 = 白练</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- ================= 体态形象 ================= -->
+  <section id="posture">
+    <div class="sec-head"><span class="sec-no">IMAGE</span><h2>体态与形象 · 每天 10 分钟</h2></div>
+    <p class="sec-sub">个人形象 = 体态 × 精神面貌 × 整洁度。这些每天 10 分钟的小事，开学第一面就会被记住。</p>
+    <div class="posture">
+      <div class="card"><h5><span class="k">每日</span>靠墙站立 5 分钟</h5><ul>
+        <li>后脑勺、肩胛、臀部、脚后跟四点贴墙</li>
+        <li>收下巴、肩膀下沉、目视前方</li>
+        <li>练的是「习惯性挺拔」，站着走路都变直</li>
+      </ul></div>
+      <div class="card"><h5><span class="k">坐姿</span>告别含胸驼背</h5><ul>
+        <li>坐满椅子，腰背挺直，电脑垫高到平视</li>
+        <li>不跷二郎腿，每 45 分钟起来活动 2 分钟</li>
+        <li>配合 YW 字和派克俯卧撑，圆肩明显改善</li>
+      </ul></div>
+      <div class="card"><h5><span class="k">面貌</span>清爽精神</h5><ul>
+        <li>早晚洗脸，出油多就控油洁面 + 防晒</li>
+        <li>头发定期修剪，保持干爽</li>
+        <li>走路抬头挺胸、眼神正视前方——自信是练出来的</li>
+      </ul></div>
+      <div class="card"><h5><span class="k">开学</span>第一周加分项</h5><ul>
+        <li>衣服合身利落，颜色不超过 3 种</li>
+        <li>提前备好两套运动服，保持训练节奏</li>
+        <li>报到时主动帮忙、大方自我介绍——形象 = 气质 + 行动</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- ================= 数据对比 ================= -->
+  <section id="records">
+    <div class="sec-head"><span class="sec-no">DATA</span><h2>数据对比 · 用数字见证</h2></div>
+    <p class="sec-sub">第 7 天填左边，第 14/20 天更新右边，进步会自动算出来。数据自动保存在本机浏览器里。</p>
+    <div class="records">
+      <div class="rec-col">
+        <h5>基线 · 第 7 天</h5>
+        <p class="when">Day 7 测试日填写</p>
+        <div class="rec-row"><label>俯卧撑（次）</label><input type="number" min="0" data-base="push" placeholder="—"></div>
+        <div class="rec-row"><label>1 分钟深蹲（次）</label><input type="number" min="0" data-base="squat" placeholder="—"></div>
+        <div class="rec-row"><label>平板支撑（秒）</label><input type="number" min="0" data-base="plank" placeholder="—"></div>
+        <div class="rec-row"><label>体重（kg）</label><input type="number" min="0" step="0.1" data-base="weight" placeholder="—"></div>
+        <div class="rec-row"><label>腰围（cm）</label><input type="number" min="0" step="0.1" data-base="waist" placeholder="—"></div>
+      </div>
+      <div class="rec-col">
+        <h5>终测 · 第 20 天</h5>
+        <p class="when">Day 20 复盘日填写</p>
+        <div class="rec-row"><label>俯卧撑（次）</label><input type="number" min="0" data-end="push" placeholder="—"></div>
+        <div class="rec-row"><label>1 分钟深蹲（次）</label><input type="number" min="0" data-end="squat" placeholder="—"></div>
+        <div class="rec-row"><label>平板支撑（秒）</label><input type="number" min="0" data-end="plank" placeholder="—"></div>
+        <div class="rec-row"><label>体重（kg）</label><input type="number" min="0" step="0.1" data-end="weight" placeholder="—"></div>
+        <div class="rec-row"><label>腰围（cm）</label><input type="number" min="0" step="0.1" data-end="waist" placeholder="—"></div>
+      </div>
+      <div class="rec-col" style="grid-column:1/-1">
+        <h5>进步一览</h5>
+        <p class="when">自动计算，不用手动做减法</p>
+        <div class="delta" id="delta-box"><span class="na">填写第 7 天和第 20 天的数据后，这里会自动显示你的进步。</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 安全提示 ================= -->
+  <section>
+    <div class="safety">
+      <span class="mark">安全第一</span>
+      <p><b>1.</b> 每次训练前必须热身，练后必须拉伸；<b>2.</b> 量力而行，动作变形立即停止，宁可少做一组也不硬撑；<b>3.</b> 关节疼痛（不是肌肉酸痛）请停止该动作并休息；<b>4.</b> 有心脏病、高血压等病史请先咨询医生；<b>5.</b> 睡眠和饮食跟训练同等重要——恢复不好，练了也白练。</p>
+    </div>
+  </section>
+
+
+</main>
+
+  <div class="foot">健身计划 v2.0 · 数据存于本机浏览器（fit20.days.v1 / fit20.records.v1）· 进度自动同步到生活全景页运动环</div>
+  <div class="foot"><button class="reset" onclick="resetAll()">重置全部打卡与数据</button></div>
+</div>
+<script>
+
+  var KEY_D = 'fit20.days.v1';
+  var KEY_R = 'fit20.records.v1';
+  var labels = {push:'俯卧撑', squat:'1分钟深蹲', plank:'平板支撑', weight:'体重', waist:'腰围'};
+
+  function loadDays(){ try { return JSON.parse(localStorage.getItem(KEY_D)) || []; } catch(e){ return []; } }
+  function saveDays(d){ localStorage.setItem(KEY_D, JSON.stringify(d)); }
+
+  function refresh(){
+    var done = loadDays();
+    document.querySelectorAll('.day').forEach(function(el){
+      var n = +el.dataset.day;
+      var is = done.indexOf(n) > -1;
+      el.classList.toggle('done', is);
+      el.querySelector('.checkin .box').textContent = is ? '✓' : '';
+    });
+    var c = done.length;
+    document.getElementById('h-count').textContent = c;
+    document.getElementById('h-bar').style.width = (c/20*100).toFixed(1) + '%';
+  }
+  function toggleDay(n){
+    var done = loadDays();
+    var i = done.indexOf(n);
+    if(i > -1){ done.splice(i,1); } else { done.push(n); }
+    saveDays(done); refresh();
+  }
+
+  function loadRec(){ try { return JSON.parse(localStorage.getItem(KEY_R)) || {}; } catch(e){ return {}; } }
+  function saveRec(r){ localStorage.setItem(KEY_R, JSON.stringify(r)); }
+  document.querySelectorAll('#records input').forEach(function(inp){
+    var key = (inp.dataset.base ? 'b_' : 'e_') + (inp.dataset.base || inp.dataset.end);
+    var r = loadRec();
+    inp.value = r[key] || '';
+    inp.addEventListener('input', function(){
+      var r2 = loadRec();
+      r2[key] = inp.value;
+      saveRec(r2); calcDelta();
+    });
+  });
+
+  function calcDelta(){
+    var r = loadRec();
+    var box = document.getElementById('delta-box');
+    var rows = [];
+    ['push','squat','plank','weight','waist'].forEach(function(k){
+      var b = parseFloat(r['b_'+k]), e = parseFloat(r['e_'+k]);
+      if(isNaN(b) || isNaN(e)) return;
+      var d = e - b;
+      var better;
+      if(k === 'weight' || k === 'waist'){ better = d < 0; }
+      else { better = d > 0; }
+      var sign = d > 0 ? '+' : '';
+      var unit = (k === 'plank') ? ' 秒' : (k === 'weight' ? ' kg' : (k === 'waist' ? ' cm' : ' 次'));
+      var arrow = d > 0 ? '↑' : (d < 0 ? '↓' : '—');
+      var cls = better ? 'up' : 'down';
+      rows.push('<div>'+labels[k]+'：<b class="'+cls+'">'+sign+d.toFixed(k==='push'||k==='squat'?0:1)+unit+'</b> '+arrow+'</div>');
+    });
+    if(rows.length < 2){ box.innerHTML = '<span class="na">填完两列数据后，这里会自动显示你的进步。</span>'; return; }
+    box.innerHTML = rows.join('');
+  }
+  calcDelta();
+
+  function resetAll(){
+    if(!confirm('确定要重置所有打卡记录和数据吗？')) return;
+    localStorage.removeItem(KEY_D); localStorage.removeItem(KEY_R);
+    document.querySelectorAll('#records input').forEach(function(i){ i.value=''; });
+    refresh(); calcDelta();
+  }
+  refresh();
+
+
+// 今日进度汇总 → 生活全景页运动环读取（seu_fit_summary）；钩住 refresh() 每次打卡后更新
+(function(){
+  var _orig = refresh;
+  refresh = function(){
+    _orig();
+    try{
+      var d = loadDays();
+      localStorage.setItem('seu_fit_summary', JSON.stringify({
+        date: new Date().toISOString().slice(0,10),
+        done: d.length, total: 20, pct: Math.round(d.length/20*100)
+      }));
+    }catch(e){}
+  };
+  refresh();
+})();
+
+</script>
+</body>
+</html>

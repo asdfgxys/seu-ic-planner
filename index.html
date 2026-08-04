@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SEU IC · 学习生活体系</title>
+<style>
+:root{
+  --bg:#f2f7f3; --card:#ffffff; --card2:#eef3ee; --border:#dde8df; --border2:#c9d9cd;
+  --ink:#26332c; --muted:#6b7a70; --faint:#97a69b;
+  --blue:#3d7fa8; --green:#2f8f6f; --gold:#c9932e; --orange:#cf7a3f; --night:#6a6fb3;
+  --r:16px; --mono:"Bahnschrift","Consolas",monospace;
+  --shadow:0 3px 12px rgba(40,90,60,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:56px 20px 60px}
+h1{font-size:22px;font-weight:800;text-align:center}
+.sub{text-align:center;font-size:12.5px;color:var(--muted);margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:28px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);text-decoration:none;color:inherit;display:block;transition:.15s}
+.card:hover{border-color:#bcd9c9;transform:translateY(-2px)}
+.card .tag{display:inline-block;font-size:9.5px;font-weight:800;border-radius:99px;padding:2px 10px;margin-bottom:8px}
+.card h2{font-size:15.5px;font-weight:800}
+.card p{font-size:12px;color:var(--muted);margin-top:6px}
+.t-learn{color:var(--blue);background:#e8f1f7}
+.t-eng{color:var(--green);background:#e5f3ec}
+.t-pano{color:var(--gold);background:#f7f0e0}
+.t-fit{color:var(--orange);background:#f8ece2}
+.note{margin-top:26px;background:var(--card);border:1px dashed var(--border2);border-radius:12px;padding:12px 16px;font-size:11.5px;color:var(--muted)}
+.foot{text-align:center;font-size:10.5px;color:var(--faint);margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SEU IC · 学习生活体系</h1>
+  <p class="sub">东南大学集成电路学院 2026 级 · 开学前自学规划（C++ / Verilog / 英语四级 / 作息运动）</p>
+  <div class="grid">
+    <a class="card" href="seu-ic-learning-planner.html"><span class="tag t-learn">主线 · 30 天</span><h2>学习计划</h2><p>C++（黑马 314P）→ Verilog（小梅哥 113P），每日 5h+，任务打卡 + 排程 + 里程碑</p></a>
+    <a class="card" href="英语四级.html"><span class="tag t-eng">英语 · 12 月考试</span><h2>英语四级</h2><p>3 阶段至 2026-12-19：词汇保温 + 听力精听 + 精读 + 每周真题，倒计时追踪</p></a>
+    <a class="card" href="生活全景.html"><span class="tag t-pano">一日 · 全景</span><h2>生活全景</h2><p>24h 圆环时钟 + 今日时间轴 + 周节奏 + 四维进度环（学习/英语/运动/作息），全绿日挑战</p></a>
+    <a class="card" href="20天健身蜕变计划.html"><span class="tag t-fit">健身 · 20 天</span><h2>健身蜕变</h2><p>适应/强化/冲刺三阶段 20 天计划，动作库 + 饮食指南 + 数据对比</p></a>
+  </div>
+  <div class="note">提示：这是静态网页，你的打卡与进度只保存在你自己的浏览器里，互不影响。每页顶部导航可互相跳转。</div>
+  <div class="foot">SEU IC · 学习生活体系 v1 · 青绿清新 · 开源在 GitHub</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store">
+<title>SEU IC · C++ &amp; Verilog 30 天冲刺计划</title>
+<style>
+
+/* ===== 模板 B · 纸张浅色（暖白底 / 墨色文字 / 笔记本质感） ===== */
+:root{
+  --bg:#f5f3ec; --card:#fdfcf8; --card2:#f0ede3; --border:#e5e1d5; --border2:#d5d0c2;
+  --ink:#33312b; --muted:#837f72; --faint:#a5a092;
+  --blue:#4a6f8f; --green:#4c7f5f; --gold:#a8843c; --orange:#b06f35;
+  --blue-bg:#e9eff5; --green-bg:#eaf2ec; --gold-bg:#f6eeda; --orange-bg:#f5e8dc;
+  --r:10px; --mono:"Bahnschrift","Consolas",monospace;
+  --shadow:0 1px 2px rgba(60,50,30,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;font-size:14.5px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+
+/* ===== 顶部固定导航（不随滚动消失） ===== */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:8px 18px;display:flex;align-items:center;gap:14px}
+.topnav .brand{font-size:13.5px;font-weight:700;white-space:nowrap;display:flex;align-items:baseline;gap:8px}
+.topnav .brand small{font-size:10.5px;color:var(--muted);font-weight:400}
+.topnav .nav{display:flex;gap:2px;overflow-x:auto;flex:1;margin:0;padding:2px 0;scrollbar-width:none}
+.topnav .nav::-webkit-scrollbar{display:none}
+.topnav .nav a{display:flex;align-items:center;gap:6px;text-decoration:none;font-size:12px;color:var(--muted);padding:5px 10px;border-radius:7px;white-space:nowrap;transition:background .15s,color .15s}
+.topnav .nav a:hover{background:var(--card2);color:var(--ink)}
+.topnav .nav a.active{background:var(--card);color:var(--blue);font-weight:600;box-shadow:var(--shadow)}
+.topnav .nav a .dot{width:5px;height:5px;border-radius:50%;background:var(--border2);flex-shrink:0}
+.topnav .nav a.active .dot{background:var(--blue)}
+.topnav .day{font-size:11.5px;color:var(--muted);border:1px solid var(--border2);border-radius:99px;padding:3px 10px;font-family:var(--mono);white-space:nowrap}
+.topnav .pct{font-size:11px;color:var(--green);font-family:var(--mono);white-space:nowrap}
+.topnav .links{display:flex;gap:6px;white-space:nowrap}
+.topnav .links a{font-size:11px;color:var(--green);border:1px solid #c6dccd;background:var(--card);border-radius:99px;padding:3px 11px;text-decoration:none;font-weight:600}
+.main{padding:76px 26px 80px}
+@media(max-width:760px){
+  .main{padding:76px 14px 70px}
+  .topnav{padding:8px 12px;gap:8px}
+  .topnav .brand small{display:none}
+  .topnav .pct{display:none}
+}
+
+/* ===== Hero 概述条 ===== */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:14px;align-items:center;box-shadow:var(--shadow)}
+.hero .num{font-family:var(--mono);font-size:36px;font-weight:700;line-height:1}
+.hero .num small{font-size:12px;color:var(--muted);font-weight:400}
+.hero .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font-size:11.5px;padding:3px 10px;border-radius:99px;border:1px solid var(--border2);color:var(--muted);background:var(--card)}
+.chip.hl{color:var(--blue);border-color:#c9d8e5;background:var(--blue-bg)}
+.chip.ok{color:var(--green);border-color:#cfe0d4;background:var(--green-bg)}
+.chip.gold{color:var(--gold);border-color:#e5d5ac;background:var(--gold-bg)}
+.chip.org{color:var(--orange);border-color:#e8cfb8;background:var(--orange-bg)}
+.hero .sub{font-size:12px;color:var(--muted);margin-top:6px;width:100%}
+.hero .sub b{color:var(--ink)}
+
+/* ===== 通用卡片 ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h2 .tag{font-size:10.5px;font-weight:500;color:var(--muted);background:var(--card2);border-radius:5px;padding:1px 8px}
+.sec-t{font-size:15px;font-weight:800;padding:18px 0 10px;display:flex;align-items:center;gap:8px;scroll-margin-top:76px}
+.sec-t .ln{flex:1;height:1px;background:var(--border)}
+.sec-anchor{scroll-margin-top:76px}
+
+/* ===== 任务项 ===== */
+.task{display:flex;gap:9px;align-items:flex-start;padding:7px 4px;border-radius:8px}
+.task:hover{background:var(--card2)}
+.task input{margin-top:4px;width:15px;height:15px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.task .t{flex:1}
+.task .k{font-size:10px;font-weight:700;border-radius:4px;padding:0 6px;margin-right:5px}
+.k.v{color:var(--blue);background:var(--blue-bg)} .k.x{color:var(--green);background:var(--green-bg)} .k.m{color:var(--gold);background:var(--gold-bg)}
+.task .mn{font-size:10.5px;color:var(--faint);font-family:var(--mono)}
+.task .acc{font-size:11.5px;color:var(--muted);display:block;margin-top:1px}
+.task .link{font-size:11px;color:var(--blue);text-decoration:none;margin-left:4px}
+.task.done{opacity:.55}
+.task.done .t{text-decoration:line-through}
+.today-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:8px;flex-wrap:wrap;gap:6px}
+.today-foot b{color:var(--green)}
+
+/* ===== 进度条 ===== */
+.bar{height:6px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .4s}
+.b-cpp{background:var(--blue)} .b-v{background:var(--green)} .b-gold{background:var(--gold)}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:8px}
+.stats .s b{font-family:var(--mono);color:var(--ink)}
+.stats .bar{width:88px;display:inline-block;vertical-align:middle}
+
+/* ===== 番茄钟 ===== */
+.pomo{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);flex-wrap:wrap}
+.pomo .tm{font-family:var(--mono);font-size:30px;font-weight:700;min-width:96px}
+.pomo .tm.run{color:var(--green)}
+.pomo button{border:1px solid var(--border2);background:var(--card);color:var(--ink);padding:5px 14px;border-radius:7px;font-size:12px;cursor:pointer}
+.pomo button:hover{background:var(--card2)}
+.pomo button.pri{background:var(--green);border-color:var(--green);color:#fdfcf8}
+.pomo .pbar{flex:1;min-width:150px}
+.pomo .plabel{font-size:11px;color:var(--muted);width:100%}
+
+/* ===== 复盘 ===== */
+.review{margin-top:10px}
+.review summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--muted)}
+.review textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12.5px;font-family:inherit;resize:vertical;min-height:44px;background:var(--card);color:var(--ink);margin-top:6px}
+.review textarea:focus{outline:none;border-color:var(--blue)}
+.review .btn{margin-top:8px}
+
+/* ===== 日历 / 里程碑 ===== */
+.cal{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.cal .c{aspect-ratio:1;border-radius:7px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:var(--mono);color:var(--faint);background:var(--card)}
+.cal .c.on{background:var(--green);border-color:var(--green);color:#fdfcf8;font-weight:700}
+.cal .c.gap{background:var(--orange-bg);border-color:#e8cfb8;color:var(--orange)}
+.cal .c.td{border:2px solid var(--blue);color:var(--blue);font-weight:700}
+.cal .c.gold{background:var(--gold);border-color:var(--gold);color:#fdfcf8;font-weight:700}
+.tipbox.gold{background:var(--gold-bg);border-color:#e5d5ac}
+.tipbox.gold b{color:var(--gold)}
+.k.a{color:var(--gold);background:var(--gold-bg)}
+.ms{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ms .m{font-size:11.5px;border:1px solid var(--border2);border-radius:99px;padding:4px 12px;color:var(--muted);background:var(--card)}
+.ms .m.got{background:var(--green);border-color:var(--green);color:#fdfcf8;font-weight:700}
+
+/* ===== 30 天排程 ===== */
+.sched{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.sched .d{border:1px solid var(--border);border-radius:8px;padding:7px 3px;text-align:center;font-size:9.5px;color:var(--faint);background:var(--card);line-height:1.4}
+.sched .d b{display:block;font-family:var(--mono);font-size:11px;color:var(--ink)}
+.sched .d.now{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.sched .d.done{background:var(--green-bg);border-color:#cfe0d4}
+.sched .d.done b{color:var(--green)}
+.sched .d.gap{opacity:.5}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid var(--border2);margin-right:4px;vertical-align:-1px}
+
+/* ===== 章节卡 ===== */
+.ch{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
+.ch-h{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none}
+.ch-h:hover{background:var(--card2)}
+.ch-h .nm{flex:1;font-size:13px;font-weight:700}
+.ch-h .sub{font-size:11px;color:var(--muted);font-weight:400;margin-left:6px}
+.ch-h .cp{font-family:var(--mono);font-size:12px;color:var(--blue)}
+.ch-h .ar{transition:transform .2s;color:var(--faint)}
+.ch.open .ch-h .ar{transform:rotate(180deg)}
+.ch-b{display:none;padding:2px 16px 12px;border-top:1px solid var(--border)}
+.ch.open .ch-b{display:block}
+.ch .pbar{margin:10px 0 2px}
+.ititle{font-size:11px;font-weight:700;color:var(--muted);margin:9px 0 2px}
+.ititle .n{color:var(--faint);font-weight:400}
+.f-tag{font-size:9.5px;font-weight:700;color:var(--gold);background:var(--gold-bg);border-radius:4px;padding:0 5px;margin-right:4px}
+.b-tag{font-size:9.5px;font-weight:700;color:var(--green);background:var(--green-bg);border-radius:4px;padding:0 5px;margin-right:4px}
+details.bg{margin:4px 0 6px;font-size:11.5px}
+details.bg summary{cursor:pointer;color:var(--blue);font-size:11px;font-weight:600}
+details.bg .bx{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-top:4px;color:var(--muted)}
+
+/* ===== 预期目标 ===== */
+.goal{display:flex;gap:10px;align-items:flex-start;padding:7px 2px;font-size:12.5px;color:var(--muted);border-bottom:1px dashed var(--border)}
+.goal:last-child{border-bottom:none}
+.goal b{color:var(--ink);font-weight:600}
+.goal .ck{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;margin-top:2px}
+.goal.done .ck{background:var(--green);border-color:var(--green);position:relative}
+.goal.done .ck::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fdfcf8}
+.goal.done{color:var(--muted)}
+.goal.done b{color:var(--green)}
+
+/* ===== 学习技巧 ===== */
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tip{display:flex;gap:9px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;font-size:12px;color:var(--muted);box-shadow:var(--shadow)}
+.tip input{margin-top:3px;width:14px;height:14px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.tip b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:1px}
+.tip.done{opacity:.55}
+.tip.done b{text-decoration:line-through}
+@media(max-width:760px){.tips{grid-template-columns:1fr}.cal,.sched{grid-template-columns:repeat(6,1fr)}}
+
+/* ===== 其他 ===== */
+.tipbox{font-size:12px;color:var(--muted);background:var(--gold-bg);border:1px solid #e5d5ac;border-radius:8px;padding:9px 11px;margin-top:8px}
+.tipbox b{color:var(--gold)}
+ol.list{margin:4px 0 0 18px;font-size:12.5px;color:var(--ink)}
+ol.list li{padding:2px 0}
+.btn{border:1px solid var(--border2);background:var(--card);color:var(--ink);padding:5px 14px;border-radius:7px;font-size:12px;cursor:pointer}
+.btn:hover{background:var(--card2)}
+.btn.danger{color:#b3593a;border-color:#e8cfb8}
+.foot{text-align:center;font-size:10.5px;color:var(--faint);margin-top:18px;line-height:1.9}
+.export{width:100%;min-height:90px;font-family:var(--mono);font-size:10.5px;border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:8px;display:none;background:var(--card);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.9</small></div>
+  <nav class="nav" id="navBar">
+      <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
+      <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
+      <a href="#schedule" data-sec="schedule"><span class="dot"></span>30 天排程</a>
+      <a href="#goals" data-sec="goals"><span class="dot"></span>预期目标</a>
+      <a href="#cpp" data-sec="cpp"><span class="dot"></span>C++ 阶段</a>
+      <a href="#v" data-sec="v"><span class="dot"></span>Verilog 阶段</a>
+      <a href="#mods" data-sec="mods"><span class="dot"></span>拓展模块</a>
+      <a href="#cards" data-sec="cards"><span class="dot"></span>知识卡</a>
+      <a href="#tips" data-sec="tips"><span class="dot"></span>学习技巧</a>
+      <a href="#method" data-sec="method"><span class="dot"></span>学习方法</a>
+      <a href="#school" data-sec="school"><span class="dot"></span>开学清单</a>
+    </nav>
+  <span class="day" id="topDay">Day 5/30</span>
+  <span class="pct" id="topPct">全局 0%</span>
+  <span class="links"><a href="英语四级.html">英语四级</a><a href="生活全景.html">生活全景</a><a href="20天健身蜕变计划.html">健身计划</a></span>
+</header>
+<div class="main">
+
+    <div class="hero">
+      <div class="num" id="heroDay">5<small> / 30</small></div>
+      <div class="meta">
+        <span class="chip hl" id="heroStage">当前：—</span>
+        <span class="chip ok" id="heroPace">节奏正常</span>
+        <span class="chip" id="heroTasks">今日 — 项</span>
+        <div class="sub" id="heroSub">—</div>
+      </div>
+    </div>
+
+    <div class="card sec-anchor" id="today">
+      <h2>今日任务 <span class="tag" id="todayTag"></span></h2>
+      <div id="todayList"></div>
+      <div class="today-foot"><span>今日完成 <b id="tDone">0</b>/<span id="tTotal">0</span> · <span id="tPct">0%</span></span><span id="tomorrowHint"></span></div>
+      <div class="pomo">
+        <span class="tm" id="pomoTm">25:00</span>
+        <button id="pomoBtn" class="pri">开始</button>
+        <button id="pomoReset">重置</button>
+        <span class="plabel">番茄钟 25/5 · 今日已学 <b id="todayMin">0</b> 分钟 / 目标 300 分钟</span>
+        <div class="pbar"><div class="bar"><i id="pomoBar" class="b-v" style="width:0%"></i></div></div>
+      </div>
+      <details class="review">
+        <summary>✍️ 三一复盘（可选：收获 / 没懂的点 / 明天第一件事）</summary>
+        <textarea id="rv1" placeholder="① 今天最大的收获是…"></textarea>
+        <textarea id="rv2" placeholder="② 还有一个没搞懂的点是…"></textarea>
+        <textarea id="rv3" placeholder="③ 明天要做的第一件事是…"></textarea>
+        <div><button class="btn pri" id="rvSave" style="background:var(--green);border-color:var(--green);color:#fdfcf8">保存复盘</button><span id="rvMsg" style="font-size:11px;color:var(--green);margin-left:8px"></span></div>
+      </details>
+    </div>
+
+    <div class="card sec-anchor" id="overview">
+      <h2>总览 <span class="tag" id="paceTag"></span></h2>
+      <div class="bar"><i id="gBar" class="b-cpp" style="width:0%"></i></div>
+      <div class="stats">
+        <span class="s">任务：<b id="gDone">0</b>/<span id="gTotal">0</span> · <b id="gPct">0%</b></span>
+        <span class="s">C++：<b id="cDone">0</b>/<span id="cTotal">0</span> <span class="bar"><i id="cBar" class="b-cpp"></i></span> <b id="cPct">0%</b></span>
+        <span class="s">Verilog：<b id="vDone">0</b>/<span id="vTotal">0</span> <span class="bar"><i id="vBar" class="b-v"></i></span> <b id="vPct">0%</b></span>
+        <span class="s">预计完成：<b id="estDone">—</b></span>
+      </div>
+      <h2 style="margin-top:14px">🔥 连击日历 <span class="tag">学习日计 · 断档豁免 <span id="fgLeft">2</span> 次</span></h2>
+      <div class="cal" id="cal"></div>
+      <h2 style="margin-top:14px">🏅 里程碑</h2>
+      <div class="ms" id="ms"></div>
+      <div class="tipbox gold" id="overBox" style="margin-top:12px">⚡ 超额账本：正在计算…</div>
+    </div>
+
+    <div class="card sec-anchor" id="schedule">
+      <h2>30 天排程预览 <span class="tag">随进度动态调整</span></h2>
+      <div class="sched" id="schedGrid"></div>
+      <div class="legend">
+        <span><i style="background:var(--green)"></i>已完成</span>
+        <span><i style="border-color:var(--blue)"></i>今天</span>
+        <span><i style="background:var(--orange-bg)"></i>断档</span>
+        <span><i></i>未到</span>
+      </div>
+    </div>
+
+    <div class="card sec-anchor" id="goals">
+      <h2>30 天后你将能… <span class="tag" id="goalTag"></span></h2>
+      <div id="goalsList"></div>
+    </div>
+
+    <div class="sec-t" id="cpp">C++ 阶段 <span class="ln"></span></div>
+    <div id="cppChs"></div>
+
+    <div class="sec-t" id="v">Verilog 阶段 <span class="ln"></span></div>
+    <div id="vChs"></div>
+
+    <div class="sec-t" id="mods">拓展模块 <span class="ln"></span></div>
+    <div id="modsBox"></div>
+
+    <div class="sec-t" id="cards">知识速查卡 <span class="ln"></span></div>
+    <div class="card"><div id="cardsBox"></div></div>
+
+    <div class="sec-t" id="tips">学习小技巧 <span class="ln"></span></div>
+    <div class="tips" id="tipsBox"></div>
+
+    <div class="sec-t" id="method">学习方法 <span class="ln"></span></div>
+    <div class="card">
+      <div class="ititle">每日 5 小时骨架</div>
+      <ol class="list">
+        <li><b>昨日回顾 15min</b>：回答三问（昨天讲了啥？哪题卡过？今天先做啥？）</li>
+        <li><b>视频 2~2.5h</b>：2~4 个主题；熟悉的 1.5 倍速；每 P 记 3 行要点</li>
+        <li><b>练习 2h</b>：1~2 个练习；先独立写 15 分钟再求助</li>
+        <li><b>复盘 30min</b>：三一复盘 + 明日预告 + 打卡</li>
+      </ol>
+      <div class="tipbox"><b>🛡️ 断档豁免</b>：30 天内允许 2 次断档（生病/有事），连击不断、不惩罚；落后时引擎自动压缩进阶练习与弹性模块，主线不受影响。</div>
+    </div>
+
+    <div class="sec-t" id="school">开学衔接清单 <span class="ln"></span></div>
+    <div class="card">
+      <ol class="list">
+        <li>开学后安装 Vivado/ModelSim（Verilog 仿真落地）</li>
+        <li>注册 GitHub 账号，把 IC-Study 代码库推上去</li>
+        <li>把 30 天笔记整理成电子版（建议 Markdown/Obsidian）</li>
+        <li>预习数字电路基础（与 Verilog 直接衔接）</li>
+        <li>保持每周 3~4 练的代码手感</li>
+      </ol>
+    </div>
+
+    <div class="foot">
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.9<br>
+      <button class="btn" id="btnExport">导出进度</button>
+      <button class="btn" id="btnImport">导入进度</button>
+      <button class="btn danger" id="btnReset">重置所有进度</button>
+      <textarea class="export" id="exportBox"></textarea>
+    </div>
+  </div>
+
+<script>
+
+"use strict";
+var DATA = {"courses": {"cpp": {"name": "黑马程序员 C++教程（匠心之作）", "bvid": "BV1et411b73Z", "url": "https://www.bilibili.com/video/BV1et411b73Z"}, "v": {"name": "小梅哥2024 FPGA Verilog 数字逻辑设计与验证", "bvid": "BV1iH4y1g7ng", "url": "https://www.bilibili.com/video/BV1iH4y1g7ng"}}, "videos": [{"id": "c01v0", "ch": "c01", "phase": "cpp", "title": "C++概述与开发环境搭建", "p": "P1-2", "sec": 781, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=1"}, {"id": "c01v1", "ch": "c01", "phase": "cpp", "title": "数据类型-整型与浮点型", "p": "P8,10", "sec": 1392, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=8"}, {"id": "c01v2", "ch": "c01", "phase": "cpp", "title": "字符型与转义字符", "p": "P11,12", "sec": 1083, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=11"}, {"id": "c01v3", "ch": "c01", "phase": "cpp", "title": "字符串类型与布尔类型", "p": "P13,14", "sec": 703, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=13"}, {"id": "c01v4", "ch": "c01", "phase": "cpp", "title": "数据的输入 cin", "p": "P15", "sec": 643, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=15"}, {"id": "c01v5", "ch": "c01", "phase": "cpp", "title": "算术运算符", "p": "P16-18", "sec": 1550, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=16"}, {"id": "c01v6", "ch": "c01", "phase": "cpp", "title": "赋值/比较/逻辑运算符", "p": "P19-23", "sec": 1571, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=19"}, {"id": "c01v7", "ch": "c01", "phase": "cpp", "title": "程序流程结构概述", "p": "P24", "sec": 642, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=24"}, {"id": "c02v0", "ch": "c02", "phase": "cpp", "title": "if/else 选择结构", "p": "P25-27", "sec": 1752, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=25"}, {"id": "c02v1", "ch": "c02", "phase": "cpp", "title": "三目运算符", "p": "P29", "sec": 392, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=29"}, {"id": "c02v2", "ch": "c02", "phase": "cpp", "title": "switch 语句", "p": "P30", "sec": 963, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=30"}, {"id": "c02v3", "ch": "c02", "phase": "cpp", "title": "while 与 do...while", "p": "P31,33", "sec": 1397, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=31"}, {"id": "c02v4", "ch": "c02", "phase": "cpp", "title": "for 循环", "p": "P35", "sec": 438, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=35"}, {"id": "c02v5", "ch": "c02", "phase": "cpp", "title": "嵌套循环", "p": "P37,38", "sec": 1043, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=37"}, {"id": "c02v6", "ch": "c02", "phase": "cpp", "title": "break/continue/goto", "p": "P39-41", "sec": 1584, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=39"}, {"id": "c03v0", "ch": "c03", "phase": "cpp", "title": "一维数组定义方式", "p": "P42", "sec": 1094, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=42"}, {"id": "c03v1", "ch": "c03", "phase": "cpp", "title": "一维数组名-地址含义", "p": "P43", "sec": 867, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=43"}, {"id": "c03v2", "ch": "c03", "phase": "cpp", "title": "冒泡排序", "p": "P46", "sec": 1138, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=46"}, {"id": "c03v3", "ch": "c03", "phase": "cpp", "title": "二维数组定义方式", "p": "P47", "sec": 871, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=47"}, {"id": "c03v4", "ch": "c03", "phase": "cpp", "title": "二维数组名", "p": "P48", "sec": 848, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=48"}, {"id": "c03v5", "ch": "c03", "phase": "cpp", "title": "二维数组应用案例", "p": "P49", "sec": 621, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=49"}, {"id": "c03v6", "ch": "c03", "phase": "cpp", "title": "函数的定义与调用", "p": "P50,51", "sec": 1146, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=50"}, {"id": "c03v7", "ch": "c03", "phase": "cpp", "title": "值传递", "p": "P52", "sec": 715, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=52"}, {"id": "c03v8", "ch": "c03", "phase": "cpp", "title": "函数声明与分文件编写", "p": "P54,55", "sec": 1095, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=54"}, {"id": "c03v10", "ch": "c03", "phase": "cpp", "title": "函数高级-默认参数与占位参数", "p": "P95,96", "sec": 1168, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=95"}, {"id": "c03v11", "ch": "c03", "phase": "cpp", "title": "函数重载-基本语法", "p": "P97", "sec": 680, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=97"}, {"id": "c03v12", "ch": "c03", "phase": "cpp", "title": "函数重载-注意事项", "p": "P98", "sec": 699, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=98"}, {"id": "c04v0", "ch": "c04", "phase": "cpp", "title": "指针的概念", "p": "P56", "sec": 612, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=56"}, {"id": "c04v1", "ch": "c04", "phase": "cpp", "title": "空指针与野指针", "p": "P58,59", "sec": 470, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=58"}, {"id": "c04v2", "ch": "c04", "phase": "cpp", "title": "const 修饰指针", "p": "P60", "sec": 906, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=60"}, {"id": "c04v3", "ch": "c04", "phase": "cpp", "title": "指针与数组", "p": "P61", "sec": 448, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=61"}, {"id": "c04v4", "ch": "c04", "phase": "cpp", "title": "指针与函数", "p": "P62", "sec": 684, "done": true, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=62"}, {"id": "c04v5", "ch": "c04", "phase": "cpp", "title": "程序内存模型-堆区与 new 运算符", "p": "P87,88", "sec": 1107, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=87"}, {"id": "c04v6", "ch": "c04", "phase": "cpp", "title": "堆区数组与 delete 实战", "p": "P88", "sec": 641, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=88"}, {"id": "c05v0", "ch": "c05", "phase": "cpp", "title": "结构体定义与使用", "p": "P64", "sec": 868, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=64"}, {"id": "c05v1", "ch": "c05", "phase": "cpp", "title": "结构体数组", "p": "P65", "sec": 491, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=65"}, {"id": "c05v2", "ch": "c05", "phase": "cpp", "title": "结构体指针", "p": "P66", "sec": 389, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=66"}, {"id": "c05v3", "ch": "c05", "phase": "cpp", "title": "结构体嵌套结构体", "p": "P67", "sec": 569, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=67"}, {"id": "c05v4", "ch": "c05", "phase": "cpp", "title": "结构体做函数参数", "p": "P68", "sec": 658, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=68"}, {"id": "c05v5", "ch": "c05", "phase": "cpp", "title": "结构体中 const 使用场景", "p": "P69", "sec": 678, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=69"}, {"id": "c06v0", "ch": "c06", "phase": "cpp", "title": "封装-属性行为与访问权限", "p": "P99-102", "sec": 2504, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=99"}, {"id": "c06v1", "ch": "c06", "phase": "cpp", "title": "构造函数与析构函数", "p": "P106,107", "sec": 2506, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=106"}, {"id": "c06v2", "ch": "c06", "phase": "cpp", "title": "拷贝构造函数", "p": "P108,109", "sec": 1587, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=108"}, {"id": "c06v3", "ch": "c06", "phase": "cpp", "title": "深拷贝与浅拷贝", "p": "P110", "sec": 1004, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=110"}, {"id": "c06v4", "ch": "c06", "phase": "cpp", "title": "static 静态成员", "p": "P113", "sec": 1277, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=113"}, {"id": "c06v5", "ch": "c06", "phase": "cpp", "title": "友元", "p": "P118-120", "sec": 1766, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=118"}, {"id": "c06v6", "ch": "c06", "phase": "cpp", "title": "运算符重载-加号", "p": "P121", "sec": 1293, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=121"}, {"id": "c06v7", "ch": "c06", "phase": "cpp", "title": "左移运算符重载", "p": "P122", "sec": 936, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=122"}, {"id": "c06v8", "ch": "c06", "phase": "cpp", "title": "继承", "p": "P127,128", "sec": 2062, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=127"}, {"id": "c06v9", "ch": "c06", "phase": "cpp", "title": "多态与虚函数", "p": "P135,136", "sec": 2118, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=135"}, {"id": "c07v0", "ch": "c07", "phase": "cpp", "title": "函数模板", "p": "P168,169", "sec": 1588, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=168"}, {"id": "c07v1", "ch": "c07", "phase": "cpp", "title": "类模板", "p": "P174,175", "sec": 878, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=174"}, {"id": "c07v2", "ch": "c07", "phase": "cpp", "title": "类模板案例-数组类封装", "p": "P183,184", "sec": 2325, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=183"}, {"id": "c07v3", "ch": "c07", "phase": "cpp", "title": "vector 容器", "p": "P186,187", "sec": 1491, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=186"}, {"id": "c07v4", "ch": "c07", "phase": "cpp", "title": "string 容器", "p": "P189-192", "sec": 2167, "done": false, "url": "https://www.bilibili.com/video/BV1et411b73Z?p=189"}, {"id": "v01v0", "ch": "v01", "phase": "v", "title": "module 模块结构（从三八译码器入门）", "p": "P12", "sec": 1819, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=12"}, {"id": "v01v1", "ch": "v01", "phase": "v", "title": "testbench 与仿真入门", "p": "P13", "sec": 922, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=13"}, {"id": "v01v2", "ch": "v01", "phase": "v", "title": "阻塞赋值与非阻塞赋值", "p": "P24", "sec": 1094, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=24"}, {"id": "v01v3", "ch": "v01", "phase": "v", "title": "参数化设计与模块例化", "p": "P22", "sec": 1320, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=22"}, {"id": "v02v0", "ch": "v02", "phase": "v", "title": "always 块与敏感列表", "p": "P19", "sec": 1735, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=19"}, {"id": "v02v1", "ch": "v02", "phase": "v", "title": "if-else 与 case 语句（译码器）", "p": "P12", "sec": 1819, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=12"}, {"id": "v02v2", "ch": "v02", "phase": "v", "title": "组合逻辑实例-流水灯移位实现", "p": "P20,21", "sec": 1233, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=20"}, {"id": "v02v3", "ch": "v02", "phase": "v", "title": "线性序列机-组合时序综合", "p": "P25,26", "sec": 2839, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=25"}, {"id": "v02v4", "ch": "v02", "phase": "v", "title": "组合逻辑仿真验证", "p": "P13", "sec": 922, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=13"}, {"id": "v03v0", "ch": "v03", "phase": "v", "title": "时序逻辑原理-D触发器与计数器", "p": "P16", "sec": 1041, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=16"}, {"id": "v03v1", "ch": "v03", "phase": "v", "title": "计数器 Verilog 实现与仿真", "p": "P17,18", "sec": 3198, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=17"}, {"id": "v03v2", "ch": "v03", "phase": "v", "title": "分频思想-流水灯", "p": "P19", "sec": 1735, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=19"}, {"id": "v03v3", "ch": "v03", "phase": "v", "title": "移位寄存器", "p": "P44", "sec": 2435, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=44"}, {"id": "v03v4", "ch": "v03", "phase": "v", "title": "亚稳态与时序安全", "p": "P36", "sec": 1032, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=36"}, {"id": "v04v0", "ch": "v04", "phase": "v", "title": "状态机原理与状态转移图", "p": "P37,38", "sec": 2156, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=37"}, {"id": "v04v1", "ch": "v04", "phase": "v", "title": "Moore 型-按键消抖实现", "p": "P39", "sec": 2634, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=39"}, {"id": "v04v2", "ch": "v04", "phase": "v", "title": "按键消抖仿真验证", "p": "P40", "sec": 1947, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=40"}, {"id": "v04v3", "ch": "v04", "phase": "v", "title": "状态机应用-串口发送逻辑", "p": "P30,31", "sec": 3220, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=30"}, {"id": "v05v0", "ch": "v05", "phase": "v", "title": "模块化层次化设计-数码管", "p": "P41,42", "sec": 2963, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=41"}, {"id": "v05v1", "ch": "v05", "phase": "v", "title": "数码管动态扫描实现", "p": "P43", "sec": 1860, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=43"}, {"id": "v05v2", "ch": "v05", "phase": "v", "title": "仿真验证技巧-综合项目方法", "p": "P52", "sec": 2448, "done": false, "url": "https://www.bilibili.com/video/BV1iH4y1g7ng?p=52"}], "exercises": [{"id": "c01e0", "ch": "c01", "phase": "cpp", "tier": "b", "title": "sizeof 输出各数据类型大小", "min": 30, "acc": "编译通过；各类型大小与常识一致", "card": null, "done": true}, {"id": "c01e1", "ch": "c01", "phase": "cpp", "tier": "b", "title": "十进制与二进制/十六进制互转", "min": 30, "acc": "5 组用例正确", "card": null, "done": true}, {"id": "c01e2", "ch": "c01", "phase": "cpp", "tier": "b", "title": "位运算三件套", "min": 40, "acc": "用 & | ^ ~ << >> 完成：奇偶判断、无临时变量交换两数、计算 2 的 n 次方、翻转指定位；每个运算一行注释说明作用；编译通过输出正确", "card": "BITCARD", "done": false}, {"id": "c01e3", "ch": "c01", "phase": "cpp", "tier": "b", "title": "进制转换与 2 的幂判断", "min": 40, "acc": "输入十进制→输出二进制/十六进制；用 n&(n-1)==0 判断 2 的幂；5 个测试用例通过", "card": null, "done": false}, {"id": "c01e4", "ch": "c01", "phase": "cpp", "tier": "b", "title": "温度与时间换算工具", "min": 30, "acc": "摄氏↔华氏换算、秒数→时:分:秒；边界值 0、59、86400 正确", "card": null, "done": false}, {"id": "c01e5", "ch": "c01", "phase": "cpp", "tier": "b", "title": "整数拆分与统计", "min": 40, "acc": "①三位数拆百/十/个位 ②输入 5 个数统计正/负/零个数与平均数 ③边界 0、负数、100、999 正确", "card": null, "done": false}, {"id": "c01f0", "ch": "c01", "phase": "cpp", "tier": "f", "title": "模拟寄存器 bit3~bit5 位操作", "min": 45, "acc": "定义 uint32_t reg=0；SET bit3、CLR bit5、TOGGLE bit4，每次操作后按二进制打印，与手算一致", "card": "REG", "done": false}, {"id": "c02e0", "ch": "c02", "phase": "cpp", "tier": "b", "title": "九九乘法表", "min": 30, "acc": "嵌套 for 实现，对齐输出（1×1=1 … 9×9=81）", "card": null, "done": false}, {"id": "c02e1", "ch": "c02", "phase": "cpp", "tier": "b", "title": "猜数字游戏", "min": 45, "acc": "随机数+while 循环+猜大猜小提示+统计次数；玩 3 局次数均正确", "card": null, "done": false}, {"id": "c02e2", "ch": "c02", "phase": "cpp", "tier": "b", "title": "最大公约数与最小公倍数", "min": 35, "acc": "辗转相除法；3 组用例正确（含互质数）", "card": null, "done": false}, {"id": "c02e3", "ch": "c02", "phase": "cpp", "tier": "b", "title": "打印菱形图案", "min": 30, "acc": "空格+星号嵌套循环，奇数行（如 7 行）完全对称", "card": null, "done": false}, {"id": "c02f0", "ch": "c02", "phase": "cpp", "tier": "f", "title": "delay_ms 延时函数与 LED 闪烁模拟", "min": 40, "acc": "空循环实现 delay_ms(int)；主程序每 500ms 打印一次 ON/OFF 共 5 次，肉眼可观察间隔", "card": "POLL", "done": false}, {"id": "c02f1", "ch": "c02", "phase": "cpp", "tier": "f", "title": "while 轮询标志位", "min": 40, "acc": "模拟：每 3 次循环 flag 置 1，主循环检测到即处理并清零；统计处理次数输出", "card": "POLL", "done": false}, {"id": "c02f2", "ch": "c02", "phase": "cpp", "tier": "f", "title": "switch 状态机 IDLE/SEND/RECV/ERR", "min": 50, "acc": "用 switch-case 实现状态流转，每个状态打印状态名，输入触发转移，非法输入回到 IDLE", "card": "FSM", "done": false}, {"id": "c02f3", "ch": "c02", "phase": "cpp", "tier": "f", "title": "for 模拟 8 次采样求平均", "min": 35, "acc": "随机数模拟 8 次采样值，求和取平均并输出；附一句对 ADC 的理解", "card": "ADC", "done": false}, {"id": "c03e0", "ch": "c03", "phase": "cpp", "tier": "b", "title": "冒泡排序+二分查找", "min": 50, "acc": "排序后二分查找目标数输出下标；含找不到的分支；3 组用例", "card": null, "done": false}, {"id": "c03e1", "ch": "c03", "phase": "cpp", "tier": "b", "title": "字符串统计", "min": 40, "acc": "统计一句话中字母/数字/空格个数；中文按 1 个字符处理", "card": null, "done": false}, {"id": "c03e2", "ch": "c03", "phase": "cpp", "tier": "b", "title": "函数重载 max", "min": 30, "acc": "max(int,int)、max(double,double)、max(int,int,int) 各调用一次验证", "card": null, "done": false}, {"id": "c03e3", "ch": "c03", "phase": "cpp", "tier": "b", "title": "3×3 矩阵转置", "min": 35, "acc": "二维数组实现，转置前后打印，结果对称", "card": null, "done": false}, {"id": "c03e4", "ch": "c03", "phase": "cpp", "tier": "b", "title": "默认参数与占位参数", "min": 30, "acc": "带默认参数的函数（如 printArr(arr,len,sep=' ')）；占位参数示例并注释用途；3 组用例", "card": null, "done": false}, {"id": "c03f0", "ch": "c03", "phase": "cpp", "tier": "f", "title": "LUT 查表存 7 段数码管编码", "min": 45, "acc": "数组存 0-9 的 7 段码（给出编码表），输入数字输出对应编码并二进制打印", "card": "LUT", "done": false}, {"id": "c03f1", "ch": "c03", "phase": "cpp", "tier": "f", "title": "函数指针数组-运算器跳转表", "min": 45, "acc": "定义加减乘除 4 个函数，用函数指针数组按输入调用；注释说明跳转表思想", "card": "FNPTR", "done": false}, {"id": "c03f2", "ch": "c03", "phase": "cpp", "tier": "f", "title": "设备注册回调（中断向量表思想）", "min": 50, "acc": "register_handler(id,func) 注册，触发时按 id 调用；模拟 3 个中断源", "card": "IVT", "done": false}, {"id": "c03f3", "ch": "c03", "phase": "cpp", "tier": "f", "title": "writeReg 函数重载", "min": 35, "acc": "重载 writeReg(int,int)/(int,char)/(int,float)，打印地址与值", "card": "REGWR", "done": false}, {"id": "c04e0", "ch": "c04", "phase": "cpp", "tier": "b", "title": "指针基础与交换两数", "min": 40, "acc": "三种类型变量用指针访问修改并打印；指针参数交换函数生效", "card": null, "done": false}, {"id": "c04e1", "ch": "c04", "phase": "cpp", "tier": "b", "title": "指针遍历数组", "min": 40, "acc": "指针遍历数组求和/找最大；函数用指针参数修改数组，结果与下标法一致", "card": null, "done": false}, {"id": "c04e2", "ch": "c04", "phase": "cpp", "tier": "b", "title": "const 三兄弟", "min": 30, "acc": "int const*/const int*/int* const 各写一例；注释各自限制；编译验证哪行报错", "card": null, "done": false}, {"id": "c04e3", "ch": "c04", "phase": "cpp", "tier": "b", "title": "new/delete 堆区练习", "min": 40, "acc": "动态分配 int 和数组，用完释放并置空；-Wall 编译无警告", "card": null, "done": false}, {"id": "c04f0", "ch": "c04", "phase": "cpp", "tier": "f", "title": "手写 my_memcpy", "min": 45, "acc": "逐字节复制任意长度内存；测试 int 数组复制结果一致；注释为什么用 char*", "card": "MEMCPY", "done": false}, {"id": "c04f1", "ch": "c04", "phase": "cpp", "tier": "f", "title": "手写 my_memset", "min": 40, "acc": "逐字节填充；测试 int 数组全部置为指定值", "card": "MEMSET", "done": false}, {"id": "c04f2", "ch": "c04", "phase": "cpp", "tier": "f", "title": "struct 对齐实验", "min": 40, "acc": "同一批字段换顺序定义两个结构体，对比 sizeof 差异；注释原因", "card": "ALIGN", "done": false}, {"id": "c04f3", "ch": "c04", "phase": "cpp", "tier": "f", "title": "模拟寄存器数组指针访问", "min": 45, "acc": "uint32_t reg[16] 模拟寄存器组，用指针访问 reg[3] 做 bit 操作并打印", "card": "MAP", "done": false}, {"id": "c04f4", "ch": "c04", "phase": "cpp", "tier": "f", "title": "野指针演示", "min": 35, "acc": "new 后 delete 并置 nullptr；注释访问已释放内存的风险（危险代码注释掉）", "card": "WILD", "done": false}, {"id": "c05e0", "ch": "c05", "phase": "cpp", "tier": "b", "title": "学生结构体", "min": 40, "acc": "Student{姓名/学号/成绩} 数组存 3 人；函数求平均并打印", "card": null, "done": false}, {"id": "c05e1", "ch": "c05", "phase": "cpp", "tier": "b", "title": "结构体指针", "min": 35, "acc": "指针访问/修改成员；函数用指针参数改成绩生效", "card": null, "done": false}, {"id": "c05e2", "ch": "c05", "phase": "cpp", "tier": "b", "title": "结构体嵌套", "min": 35, "acc": "日期结构体嵌套进学生结构体；输入输出完整信息", "card": null, "done": false}, {"id": "c05f0", "ch": "c05", "phase": "cpp", "tier": "f", "title": "位域模拟寄存器字段", "min": 45, "acc": "定义 32 位结构体位域（使能/模式/速度/数据），赋值后打印各字段值", "card": "BITFIELD", "done": false}, {"id": "c05f1", "ch": "c05", "phase": "cpp", "tier": "f", "title": "union 联合体按字节读取", "min": 40, "acc": "union 含 uint32_t 与字节数组；写 32 位值后按字节打印（大小端观察）", "card": "UNION", "done": false}, {"id": "c05f2", "ch": "c05", "phase": "cpp", "tier": "f", "title": "#pragma pack 对齐控制", "min": 40, "acc": "对比默认与 pack(1) 的 sizeof；注释硬件驱动为何要紧凑对齐", "card": "PACK", "done": false}, {"id": "c06e0", "ch": "c06", "phase": "cpp", "tier": "b", "title": "BankAccount 类", "min": 45, "acc": "封装余额；deposit/withdraw/display；构造函数初始化；取款超额提示", "card": null, "done": false}, {"id": "c06e1", "ch": "c06", "phase": "cpp", "tier": "b", "title": "构造析构顺序实验", "min": 35, "acc": "创建多个对象打印构造/析构顺序；触发一次拷贝构造并观察", "card": null, "done": false}, {"id": "c06e2", "ch": "c06", "phase": "cpp", "tier": "b", "title": "继承多态 speak", "min": 45, "acc": "Animal/Dog/Cat；虚函数 speak；基类指针分别调用输出不同", "card": null, "done": false}, {"id": "c06f0", "ch": "c06", "phase": "cpp", "tier": "f", "title": "GPIO 类封装", "min": 60, "acc": "GPIO 类(port/pin, setMode/write/read)，内部用位运算；主程序模拟点灯 5 次", "card": "HAB", "done": false}, {"id": "c06f1", "ch": "c06", "phase": "cpp", "tier": "f", "title": "重载 << 打印寄存器状态", "min": 45, "acc": "定义一个寄存器类，重载 << 输出二进制状态；含置位方法", "card": "STREAM", "done": false}, {"id": "c06f2", "ch": "c06", "phase": "cpp", "tier": "f", "title": "硬件设备抽象基类", "min": 60, "acc": "HardwareDevice 抽象基类(init/read/write 纯虚)，UART/I2C 派生；多态调用", "card": "DRIVER", "done": false}, {"id": "c07e0", "ch": "c07", "phase": "cpp", "tier": "b", "title": "函数模板", "min": 35, "acc": "模板 max/min/swap；int 与 double 实例化均正确", "card": null, "done": false}, {"id": "c07e1", "ch": "c07", "phase": "cpp", "tier": "b", "title": "vector 成绩管理", "min": 40, "acc": "push_back 存成绩；遍历求和平均；用 algorithm 的 sort 排序输出", "card": null, "done": false}, {"id": "c07e2", "ch": "c07", "phase": "cpp", "tier": "b", "title": "string 小工具", "min": 40, "acc": "拼接/查找/替换/转大写；对一个句子完成 4 种操作并打印", "card": null, "done": false}, {"id": "c07f0", "ch": "c07", "phase": "cpp", "tier": "f", "title": "SET_BIT/CLR_BIT 宏族", "min": 35, "acc": "实现 SET_BIT/CLR_BIT/TOGGLE_BIT/READ_BIT 宏并测试；注释宏的陷阱", "card": "MACRO", "done": false}, {"id": "c07f1", "ch": "c07", "phase": "cpp", "tier": "f", "title": "RingBuffer 模板类", "min": 60, "acc": "模板类 push/pop/full/empty；环形数组实现；测试满/空边界", "card": "RING", "done": false}, {"id": "c07f2", "ch": "c07", "phase": "cpp", "tier": "f", "title": "UART 发送帧拼装", "min": 50, "acc": "用位运算拼装 1 起始位+8 数据位+1 停止位；打印每比特", "card": "UART", "done": false}, {"id": "c07f3", "ch": "c07", "phase": "cpp", "tier": "f", "title": "RegisterModel 综合", "min": 60, "acc": "32 位寄存器读写类：读改写指定字段；用宏/位域/联合任一实现；测试 3 组", "card": "REGMOD", "done": false}, {"id": "v01e0", "ch": "v01", "phase": "v", "tier": "b", "title": "与或非门 + 真值表 🖥️", "min": 30, "acc": "手写 3 个 module；手推真值表并对照；可选 EDA Playground 仿真验证", "card": "VCARD", "done": false}, {"id": "v01e1", "ch": "v01", "phase": "v", "tier": "b", "title": "半加器到全加器 🖥️", "min": 40, "acc": "两个 module 及例化关系；手推波形图；可选仿真", "card": "VCARD", "done": false}, {"id": "v01e2", "ch": "v01", "phase": "v", "tier": "b", "title": "4 选 1 数据选择器（case）", "min": 35, "acc": "手写 module；手推 4 种选择输出", "card": "VCARD", "done": false}, {"id": "v01e3", "ch": "v01", "phase": "v", "tier": "b", "title": "testbench 骨架默写 🖥️", "min": 30, "acc": "背写时钟/复位/激励模板；注释每行作用；可选仿真", "card": "VCARD", "done": false}, {"id": "v02e0", "ch": "v02", "phase": "v", "tier": "b", "title": "3-8 译码器", "min": 35, "acc": "手写 module；手推 8 行真值表", "card": "VCARD", "done": false}, {"id": "v02e1", "ch": "v02", "phase": "v", "tier": "b", "title": "8-3 优先编码器", "min": 40, "acc": "手写 module；手推优先级规则", "card": "VCARD", "done": false}, {"id": "v02e2", "ch": "v02", "phase": "v", "tier": "b", "title": "BCD 转 7 段码", "min": 40, "acc": "对照真值表手写；0-9 全部正确", "card": "VCARD", "done": false}, {"id": "v02e3", "ch": "v02", "phase": "v", "tier": "b", "title": "8 位 ALU", "min": 50, "acc": "加减/与/或/异或/移位 5 种操作；手推 3 组用例", "card": "VCARD", "done": false}, {"id": "v03e0", "ch": "v03", "phase": "v", "tier": "b", "title": "D 触发器（同步/异步复位两版）", "min": 45, "acc": "两版代码；手画复位时序图并对比", "card": "VCARD", "done": false}, {"id": "v03e1", "ch": "v03", "phase": "v", "tier": "b", "title": "任意偶数分频器", "min": 40, "acc": "参数化分频；手推 4 分频波形", "card": "VCARD", "done": false}, {"id": "v03e2", "ch": "v03", "phase": "v", "tier": "b", "title": "3 分频与 5 分频（奇数分频）", "min": 40, "acc": "手写并用占空比分析；手画波形", "card": "VCARD", "done": false}, {"id": "v03e3", "ch": "v03", "phase": "v", "tier": "b", "title": "8 位双向移位寄存器", "min": 40, "acc": "含左移/右移控制位；手推时序", "card": "VCARD", "done": false}, {"id": "v04e0", "ch": "v04", "phase": "v", "tier": "b", "title": "1011 序列检测器（Mealy）", "min": 50, "acc": "先画状态图再写代码；手推 3 个输入序列", "card": "VCARD", "done": false}, {"id": "v04e1", "ch": "v04", "phase": "v", "tier": "b", "title": "交通灯控制器（Moore）", "min": 55, "acc": "状态图+代码+状态转移表；手推一个完整周期", "card": "VCARD", "done": false}, {"id": "v04e2", "ch": "v04", "phase": "v", "tier": "b", "title": "简易电子秒表 0-59", "min": 55, "acc": "分频+计数器+复位；手推 59→00 回绕", "card": "VCARD", "done": false}, {"id": "v05e0", "ch": "v05", "phase": "v", "tier": "b", "title": "数字频率计（手写）", "min": 60, "acc": "闸门+锁存+显示思路；模块框图+代码+测试思路三件套", "card": "VCARD", "done": false}, {"id": "v05e1", "ch": "v05", "phase": "v", "tier": "b", "title": "跑马灯控制器（手写）", "min": 60, "acc": "分频+移位/状态机；三件套提交", "card": "VCARD", "done": false}, {"id": "v05e2", "ch": "v05", "phase": "v", "tier": "b", "title": "顶层整合与模块切换", "min": 60, "acc": "两个项目整合到顶层模块；三件套提交", "card": "VCARD", "done": false}], "modules": [{"id": "E1", "title": "计算机基础补全", "prio": "core", "desc": "补码/大小端/内存四区——学完指针后立刻补的底层常识", "tasks": ["e1a", "e1b", "e1c"]}, {"id": "E2", "title": "现代 C++ 速览", "prio": "reco", "desc": "auto/范围for/lambda/引用——让代码更高效", "tasks": ["e2a", "e2b"]}, {"id": "E3", "title": "STL 深化", "prio": "reco", "desc": "map/list/algorithm——从会语法到能写代码", "tasks": ["e3a", "e3b"]}, {"id": "E4", "title": "编译与调试", "prio": "flex", "desc": "g++ 参数/Makefile/gdb——工具链落地", "tasks": ["e4a", "e4b", "e4c"]}, {"id": "E5", "title": "Git 基础", "prio": "flex", "desc": "版本控制——开学交作业做项目必用", "tasks": ["e5a"]}, {"id": "E6", "title": "综合项目：简易 CPU 模拟器", "prio": "core", "desc": "C++ 收官：寄存器堆+ALU+内存+指令循环", "tasks": ["e6a", "e6b"]}, {"id": "E7", "title": "Verilog 参数化与模块进阶", "prio": "reco", "desc": "parameter/generate——直接衔接大一课程", "tasks": ["e7a", "e7b"]}, {"id": "R1", "title": "C++ 总复习与自测", "prio": "core", "desc": "一页纸整理 + 章节自测——C++ 收官", "tasks": ["r1a"]}, {"id": "R2", "title": "Verilog 总复习与收尾", "prio": "core", "desc": "模块框图 + 语法速查默写——收尾", "tasks": ["r2a"]}], "mtasks": [{"id": "e1a", "mod": "E1", "title": "补码实验", "min": 30, "acc": "打印 -1~-128 的补码二进制；与手算一致", "card": "COMP"}, {"id": "e1b", "mod": "E1", "title": "大小端检测", "min": 30, "acc": "用 union 或指针检测本机大小端；输出并注释原理", "card": "ENDIAN"}, {"id": "e1c", "mod": "E1", "title": "内存四区实验", "min": 40, "acc": "打印全局/局部/静态/堆变量地址，观察高低并注释属于哪个区", "card": "MEM4"}, {"id": "e2a", "mod": "E2", "title": "lambda 排序", "min": 30, "acc": "用 lambda 对成绩结构体按分数/姓名排序；两种规则验证", "card": "MODERN"}, {"id": "e2b", "mod": "E2", "title": "auto+范围for 重写", "min": 30, "acc": "把 c03 的旧代码用 auto/范围for 重写；行为不变", "card": "MODERN"}, {"id": "e3a", "mod": "E3", "title": "map 词频统计", "min": 45, "acc": "统计一段英文的单词出现次数；与手数一致", "card": "STL"}, {"id": "e3b", "mod": "E3", "title": "list + algorithm", "min": 45, "acc": "list 增删 + sort/find/accumulate 各用一次", "card": "STL"}, {"id": "e4a", "mod": "E4", "title": "-Wall 修复警告", "min": 30, "acc": "故意写有警告的代码，用 -Wall 找出并全部修复", "card": "COMPILE"}, {"id": "e4b", "mod": "E4", "title": "最小 Makefile", "min": 30, "acc": "写 Makefile 一键编译 3 个文件；make 成功", "card": "COMPILE"}, {"id": "e4c", "mod": "E4", "title": "gdb/VS Code 断点调试", "min": 40, "acc": "打断点看变量变化；截图或记录输出", "card": "GDB"}, {"id": "e5a", "mod": "E5", "title": "仓库提交与分支", "min": 45, "acc": "git init→提交→建分支改代码→合并；git log 有完整历史", "card": "GIT"}, {"id": "e6a", "mod": "E6", "title": "CPU 模拟器-程序 1（求和）", "min": 120, "acc": "5 个 checkpoint 全部通过；运行 1+…+10 输出 55", "card": "CPU"}, {"id": "e6b", "mod": "E6", "title": "CPU 模拟器-程序 2（找最大值）", "min": 90, "acc": "加载数据区，运行找最大值程序输出正确", "card": "CPU"}, {"id": "e7a", "mod": "E7", "title": "parameter 宽度可配模块", "min": 40, "acc": "用 parameter 实现 N 位加法器；不同位宽实例化", "card": "PARAM"}, {"id": "e7b", "mod": "E7", "title": "generate 生成 4 位加法器", "min": 40, "acc": "用 generate 循环生成；手写并推演一位进位", "card": "PARAM"}, {"id": "r1a", "mod": "R1", "title": "C++ 总复习（一页纸+章节自测）", "min": 90, "acc": "整理 C++ 一页纸（指针/内存/类/STL）；c04-c07 每章自测 10 题全对", "card": null}, {"id": "r2a", "mod": "R2", "title": "Verilog 总复习（框图+速查默写）", "min": 60, "acc": "默写 Verilog 语法速查卡；手画 3 个模块框图并注释", "card": "VCARD"}], "cards": {"BITCARD": {"t": "位运算速查卡", "b": "& 与（清零用：x&0=0）| 或（置1用：x|1=1）^ 异或（翻转用：x^1=取反）~ 取反 << 左移（×2）>> 右移（÷2）。硬件寄存器就是一堆位，会位运算才能读写寄存器。"}, "REG": {"t": "什么是寄存器", "b": "寄存器是芯片里一组能存 1 或 0 的电路单元，通常 32 个一组（32 位）。芯片的每个功能（点灯、发数据）都是靠读写特定地址的寄存器完成的。现在用变量模拟它，先练会位操作，以后操作真寄存器就是换一个地址的事。"}, "POLL": {"t": "轮询 vs 中断", "b": "芯片检测外部事件有两种方式：轮询（一直循环问'好了没'）和中断（事件来了自动跳去处理）。嵌入式的裸机代码大量用轮询+标志位。这个练习模拟的就是'主循环检查标志位'的模式。"}, "FSM": {"t": "什么是状态机", "b": "状态机 = 有限个状态 + 状态之间的转移规则。生活类比：红绿灯（红→绿→黄→红）就是状态机。硬件里按键消抖、串口收发、协议解析全用状态机。"}, "ADC": {"t": "什么是 ADC", "b": "ADC（模数转换器）把连续变化的电压变成数字。单片机采集温度、电压都要靠它。练习用循环模拟'采集 8 次'，理解多次采样求平均能抗噪声。"}, "LUT": {"t": "查表法", "b": "查表 = 把结果预先算好存进数组，用时直接按下标取。硬件里译码器、编码器本质都是查表；软件里 7 段数码管显示、CRC 校验都用查表提速。"}, "FNPTR": {"t": "函数指针", "b": "函数指针 = 指向函数的指针，可以像变量一样存进数组、传来传去。硬件驱动的'跳转表''驱动表'就是函数指针数组；回调（callback）也是它。"}, "IVT": {"t": "中断向量表", "b": "中断向量表 = 一张'中断号→处理函数'的表，CPU 收到中断就查表跳转。你的 register_handler 就是在模拟这张表。"}, "REGWR": {"t": "寄存器写接口", "b": "硬件驱动的底层往往就是一层 writeReg(addr, val) 这样的函数。C++ 的函数重载让同一函数名能接受不同数据类型，驱动里很常见。"}, "MEMCPY": {"t": "memcpy 为什么重要", "b": "memcpy 是 C 语言最常用的内存复制函数。缓冲区搬运、DMA 描述、协议栈收发全在用它。手写一遍才能真正理解指针和内存。"}, "MEMSET": {"t": "memset 的用途", "b": "memset 把一块内存全部填成同一个值，常用于清零缓冲区或初始化结构体。注意它按字节填，填 int 数组要用 0。"}, "ALIGN": {"t": "内存对齐", "b": "CPU 按字（4/8 字节）读内存，结构体字段会自动对齐，所以字段顺序不同、sizeof 就不同。硬件寄存器结构体尤其讲究对齐和紧凑。"}, "MAP": {"t": "地址映射", "b": "在单片机里，寄存器就是内存地址——写 *(uint32_t*)0x40021000 就是写寄存器。指针变量模拟寄存器组，练的就是这套访问方式。"}, "WILD": {"t": "野指针与悬垂指针", "b": "指针指向已释放的内存叫悬垂指针，指向未知地址叫野指针，访问它们会崩溃或数据错乱。delete 后置 nullptr 是好习惯。"}, "BITFIELD": {"t": "位域", "b": "位域（bitfield）允许在结构体里按位分配字段，正好对应硬件寄存器里'第 3-5 位是模式'这样的定义。读芯片手册时到处都是。"}, "UNION": {"t": "联合体", "b": "union 让多个变量共享同一块内存——同一个 32 位值既可以当 int 读，也可以按 4 个字节读。硬件寄存器访问、协议解析常用。"}, "PACK": {"t": "紧凑对齐", "b": "#pragma pack(1) 让结构体按 1 字节对齐，不补空位。硬件协议帧、寄存器块定义经常需要，否则结构体大小和手册对不上。"}, "HAB": {"t": "硬件抽象", "b": "把寄存器操作包进类（setMode/write/read），上层代码就不碰寄存器细节——这叫硬件抽象层（HAL）。驱动分层是嵌入式开发的标配。"}, "STREAM": {"t": "流输出重载", "b": "重载 << 让对象能直接用 cout 打印，调试硬件状态时一行 cout << reg 就能看到整个寄存器的二进制，比逐位打印强太多。"}, "DRIVER": {"t": "驱动分层", "b": "抽象基类定义接口（init/read/write），每种外设（UART/I2C/SPI）做派生实现。上层只面对基类接口，换硬件不用改上层代码——多态的核心价值。"}, "MACRO": {"t": "宏的威力与陷阱", "b": "宏在编译前做文本替换，常用于寄存器位操作，效率高无函数调用开销。陷阱：参数要加括号，避免副作用（如 SET_BIT(x,3) 里 x 被求值两次）。"}, "RING": {"t": "环形缓冲", "b": "环形缓冲（RingBuffer）用固定数组+头尾指针循环使用，是串口、音频、网络缓冲区的最常用结构。模板类让它能装任意类型。"}, "UART": {"t": "UART 协议", "b": "UART 串口一帧 = 1 起始位(0) + 8 数据位 + 1 停止位(1)。发送就是把数据按位拼出来，用移位和与运算逐位取。这个练习就是串口驱动的核心逻辑。"}, "REGMOD": {"t": "寄存器模型", "b": "真实驱动里寄存器读改写有固定套路：读→改位→写回。用类+宏/位域实现一个 RegisterModel，就是把'操作寄存器'这件事规范化的练习。"}, "COMP": {"t": "补码", "b": "计算机用补码表示负数：取反+1。所以 -1 是 0xFFFFFFFF。补码的好处：加法和减法用同一套电路。硬件设计者天天和它打交道。"}, "ENDIAN": {"t": "大小端", "b": "大端：高字节存低地址；小端：低字节存低地址（x86/ARM 默认小端）。网络协议大多大端。union 实验能一眼看穿本机字节序。"}, "MEM4": {"t": "内存四区", "b": "程序内存分代码区/全局区/栈区/堆区。栈自动管理（局部变量），堆手动管理（new/delete）。打印地址观察规律，是理解指针的第一步。"}, "MODERN": {"t": "现代 C++ 特性", "b": "auto 自动推导类型、范围 for 遍历容器、lambda 就地定义匿名函数（排序/回调利器）、引用是变量的别名（比指针安全）。这些让代码更短更不容易错。"}, "STL": {"t": "STL 容器", "b": "vector 动态数组、map 键值对、list 双向链表。algorithm 提供 sort/find/accumulate 等通用算法。会用它们，写代码效率翻倍。"}, "COMPILE": {"t": "编译流程", "b": "g++ 源文件→预处理→编译→汇编→链接→可执行文件。-Wall 显示所有警告（警告往往是 bug 的前兆），-g 保留调试信息，-O2 优化。"}, "GDB": {"t": "调试器", "b": "gdb（或 VS Code 调试面板）可以断点暂停、单步执行、查看变量。'printf 调试' 90% 的情况都能被断点替代，而且快得多。"}, "GIT": {"t": "Git 是什么", "b": "Git 记录文件的每次修改历史，可以回退、开分支实验、多人协作。开学交大作业、进实验室做项目，几乎必用。"}, "CPU": {"t": "CPU 模拟器原理", "b": "CPU = 取指→译码→执行→更新 PC 的循环。寄存器堆存数据，ALU 做运算，内存存程序和数组。用类模拟这套结构，你就理解了计算机最核心的骨架——这也是为什么这个项目是 C++ 收官。"}, "PARAM": {"t": "parameter 与 generate", "b": "parameter 让模块宽度可配置（写一次用多种位宽），generate 按规则批量生成电路。这是 Verilog 从'写模块'到'写可复用模块'的分水岭。"}, "VCARD": {"t": "Verilog 语法速查", "b": "module 封装电路（端口=输入输出）；wire 连线、reg 寄存器；assign 连续赋值（组合逻辑）；always @(posedge clk) 时序逻辑块；<= 非阻塞赋值用于时序、= 阻塞用于组合。先手写，语法自然熟。"}}, "chapters": [{"id": "c01", "phase": "cpp", "title": "C++ 基础入门", "sub": "已学完 · 练习补漏"}, {"id": "c02", "phase": "cpp", "title": "程序流程控制", "sub": "已学完 · 练习补漏"}, {"id": "c03", "phase": "cpp", "title": "数组与函数", "sub": "函数高级补学中（P95-98）"}, {"id": "c04", "phase": "cpp", "title": "指针与内存操作", "sub": "进行中 · 堆区待学"}, {"id": "c05", "phase": "cpp", "title": "结构体与位域", "sub": "待学"}, {"id": "c06", "phase": "cpp", "title": "类与对象", "sub": "待学"}, {"id": "c07", "phase": "cpp", "title": "模板与 STL 基础", "sub": "待学"}, {"id": "v01", "phase": "v", "title": "Verilog 基础语法", "sub": "待学 · 手写练习"}, {"id": "v02", "phase": "v", "title": "Verilog 组合逻辑", "sub": "待学 · 手写练习"}, {"id": "v03", "phase": "v", "title": "Verilog 时序逻辑", "sub": "待学 · 手写练习"}, {"id": "v04", "phase": "v", "title": "Verilog 状态机 FSM", "sub": "待学 · 手写练习"}, {"id": "v05", "phase": "v", "title": "Verilog 综合项目", "sub": "待学 · 三件套交付"}], "milestones": [{"id": "cpp_done", "name": "C++ 完成 · 指针掌控者", "desc": "c04-c07 全部视频与基础练习完成"}, {"id": "v_done", "name": "Verilog 完成 · 时序大师", "desc": "v01-v05 全部完成"}, {"id": "full", "name": "30 天全勤 · 毕业证书", "desc": "连击 30 天（含豁免）"}, {"id": "e6_done", "name": "CPU 模拟器通关", "desc": "E6 两个程序验收通过"}], "goals": [{"id": "g_cpp", "name": "C++ 能力", "desc": "独立写 200–300 行代码；指针/内存/类/STL 随手用；不惧内存与指针", "cond": "cpp_done"}, {"id": "g_e6", "name": "综合项目", "desc": "CPU 模拟器 5 个 checkpoint 全部通过；求和=55 与找最大值两程序跑通", "cond": "e6_done"}, {"id": "g_v", "name": "Verilog 基础", "desc": "看懂并手写基础 RTL；组合/时序/FSM 三类各能独立写一个；会画模块框图 + testbench 思路", "cond": "v_done"}, {"id": "g_habit", "name": "习惯养成", "desc": "连续 30 天每天 5h 专注（含 2 次断档豁免）；三一复盘写满 30 天", "cond": "full"}, {"id": "g_school", "name": "开学衔接", "desc": "笔记整理成电子版；GitHub 仓库已建；直接衔接数字电路与程序设计课", "cond": "main_done"}], "tips": [{"t": "视频 1.5x / 1.0x", "b": "熟悉的内容 1.5 倍速，新概念 1.0 倍速；听不懂立即暂停回看，绝不硬看。"}, {"t": "每 P 三行笔记", "b": "每看完一个分P，强制写下 3 行要点——输出倒逼输入，防止'看过就忘'。"}, {"t": "练习先独立 15 分钟", "b": "先自己写 15 分钟，卡住再问 AI；让 AI 讲原理和提示思路，不给完整答案；写完让 AI 做 code review。"}, {"t": "费曼复述", "b": "每章结束，用 3 句话把核心概念讲给'想象中的同学'——讲得清 = 真会了。"}, {"t": "代码自己敲", "b": "不复制粘贴老师的代码，每个示例都亲手敲一遍、编译运行一遍。"}, {"t": "番茄钟 25/5", "b": "用页面内置番茄钟：25 分钟专注 + 5 分钟休息，每 4 轮休息 15 分钟。"}, {"t": "卡点不过夜", "b": "三一复盘里'没搞懂的点'，第二天早上第一件事就是解决它。"}, {"t": "间隔复习", "b": "每天开头 15 分钟回看昨天的笔记与代码，周末 1 小时大复习。"}, {"t": "环境管理", "b": "固定学习时段；手机放另一个房间；桌面只留当前任务。"}, {"t": "睡眠优先", "b": "23:30 前睡觉，睡够 7–8 小时——记忆巩固发生在睡眠中，熬夜等于白练。"}], "coreOrder": ["c01e5", "c01e4", "c02e0", "c02e1", "c02e2", "c02e3", "c03v10", "c03v11", "c03v12", "c03e0", "c03e1", "c03e2", "c03e3", "c03e4", "c04v5", "c04v6", "c04e0", "c04e1", "c04e2", "c04e3", "e1a", "e1b", "e1c", "c01e2", "c01e3", "c05v0", "c05v1", "c05v2", "c05v3", "c05v4", "c05v5", "c05e0", "c05e1", "c05e2", "c06v0", "c06v1", "c06v2", "c06v3", "c06v4", "c06v5", "c06v6", "c06v7", "c06v8", "c06v9", "c06e0", "c06e1", "c06e2", "c07v0", "c07v1", "c07v2", "c07v3", "c07v4", "c07e0", "c07e1", "c07e2", "e2a", "e2b", "e3a", "e3b", "e4a", "e4b", "e4c", "e5a", "r1a", "e6a", "e6b", "v01v0", "v01v1", "v01v2", "v01v3", "v01e0", "v01e1", "v01e2", "v01e3", "v02v0", "v02v1", "v02v2", "v02v3", "v02v4", "v02e0", "v02e1", "v02e2", "v02e3", "v03v0", "v03v1", "v03v2", "v03v3", "v03v4", "v03e0", "v03e1", "v03e2", "v03e3", "v04v0", "v04v1", "v04v2", "v04v3", "v04e0", "v04e1", "v04e2", "v05v0", "v05v1", "v05v2", "v05e0", "v05e1", "v05e2", "r2a", "e7a", "e7b"]};
+var STORE = 'seu_ic_v5';
+var START = '2026-07-30';
+
+var V = {};
+DATA.videos.forEach(function(v){ V[v.id] = {id:v.id, kind:'v', ch:v.ch, phase:v.phase, title:v.title, p:v.p, sec:v.sec, min:Math.round(v.sec/60), url:v.url, done:v.done}; });
+DATA.exercises.forEach(function(x){ V[x.id] = {id:x.id, kind:'x', ch:x.ch, phase:x.phase, tier:x.tier, title:x.title, min:x.min, acc:x.acc, card:x.card, done:x.done}; });
+DATA.mtasks.forEach(function(m){ V[m.id] = {id:m.id, kind:'m', mod:m.mod, phase:'m', title:m.title, min:m.min, acc:m.acc, card:m.card}; });
+var CORE_ORDER = DATA.coreOrder.slice();
+var CH = {}; DATA.chapters.forEach(function(c){ CH[c.id]=c; });
+var MODS = {}; DATA.modules.forEach(function(m){ MODS[m.id]=m; });
+var CARDS = DATA.cards;
+var SHORT = {c01:'补练', c02:'补练', c03:'补练', c04:'指针', c05:'结构体', c06:'类', c07:'模板',
+             v01:'V语法', v02:'V组合', v03:'V时序', v04:'V状态机', v05:'V项目'};
+// 数据版本指纹：由任务清单内容推导，计划数据一变即失效（用于今日清单缓存失效判断）
+var DATA_REV = (function(){ var s = CORE_ORDER.join(',') + Object.keys(V).sort().join(','); var h = 0;
+  for (var i = 0; i < s.length; i++){ h = (h * 31 + s.charCodeAt(i)) | 0; } return h; })();
+// 说明：排程为固定清单（computePlan 与个人进度无关），今日清单/30天排程与预览永远一致；
+// DATA_REV 保留仅用于未来可能的缓存场景。
+
+function today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function addDays(s,n){ var d=new Date(s+'T00:00:00'); d.setDate(d.getDate()+n); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function dayIndex(start){ var s=new Date(start+'T00:00:00'), t=new Date(); return Math.floor((t-s)/86400000)+1; }
+function clamp(n,a,b){ return Math.max(a,Math.min(b,n)); }
+
+var state = null;
+function init(){
+  var s = localStorage.getItem(STORE);
+  if(s){ try{ var p=JSON.parse(s); if(p && p.v===5){ state=p; ensureState(); return; } }catch(e){} }
+  state = freshState();
+  migrateV4();
+  save();
+}
+function freshState(){
+  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, forgiven:2, tipsDone:{}};
+  Object.keys(V).forEach(function(id){ if(V[id].done) st.items[id]=true; });
+  return st;
+}
+function ensureState(){
+  if(!state.items) state.items={};
+  Object.keys(V).forEach(function(id){ if(state.items[id]===undefined) state.items[id]=false; });
+  if(!state.notes) state.notes={};
+  if(!state.pomo) state.pomo={};
+  if(!state.checkins) state.checkins={};
+  if(!state.tipsDone) state.tipsDone={};
+  if(state.forgiven===undefined) state.forgiven=2;
+  if(!state.start) state.start=START;
+}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+function isDone(id){ return !!state.items[id]; }
+function toggle(id, el){
+  state.items[id] = !state.items[id];
+  if(state.items[id]){ state.checkins[today()] = (state.checkins[today()]||0)+1; }
+  else { state.checkins[today()] = Math.max(0,(state.checkins[today()]||0)-1); }
+  save(); render();
+}
+function toggleTip(i){
+  state.tipsDone[i] = !state.tipsDone[i];
+  save(); renderTips();
+}
+function resetAll(){ if(!confirm('确定重置 v5 全部进度？')) return; localStorage.removeItem(STORE); state=freshState(); migrateV4(); save(); render(); }
+
+function migrateV4(){
+  var old=null;
+  try{ var s=localStorage.getItem('seu_ic_v4'); if(s){ old=JSON.parse(s); } }catch(e){}
+  if(old && old.items){
+    Object.keys(old.items).forEach(function(k){
+      if(old.items[k] && V[k] && V[k].kind!=='m') state.items[k]=true;
+    });
+    ['c01e0','c01e1'].forEach(function(k){ if(old.items[k]) state.items[k]=true; });
+  }
+  try{ var dd=JSON.parse(localStorage.getItem('seu_ic_day')); if(dd && dd.start) state.start=dd.start; }catch(e){}
+}
+
+// ============ 排程引擎（纯函数） ============
+var CORE_ALL = CORE_ORDER.concat(Object.keys(V).filter(function(id){
+  return V[id].done && (V[id].kind === 'v' || (V[id].kind === 'x' && V[id].tier === 'b'));
+}));
+function computePlan(items, dayN){
+  // 固定排程：调度全部核心任务，与个人进度无关 → 预览与实际永远一致；
+  // 个人进度只影响勾选状态、统计、节奏与里程碑，不再重排任务。
+  var rem = CORE_ORDER.slice();
+  var budgetV = 160, budgetX = 130, target = 270;
+  var days = {}, overflow = [], day = dayN;
+  while (rem.length && day <= 30) {
+    var dv = 0, dx = 0, taken = [], progress = true;
+    while (progress) {
+      progress = false;
+      var cppOrModLeft = rem.some(function(id){ return V[id].phase !== 'v'; });
+      for (var i = 0; i < rem.length; i++) {
+        var id = rem[i], d = V[id], m = d.min;
+        if (d.phase === 'v' && cppOrModLeft) continue;
+        if (d.kind === 'v') {
+          if (dv + m <= budgetV && dv + dx + m <= target) { taken.push(id); dv += m; rem.splice(i, 1); progress = true; break; }
+        } else {
+          if (dx + m <= budgetX && dv + dx + m <= target) { taken.push(id); dx += m; rem.splice(i, 1); progress = true; break; }
+        }
+      }
+    }
+    if (!taken.length) break;
+    days[day] = taken; day++;
+  }
+  overflow = rem.slice();
+  return {days: days, overflow: overflow};
+}
+function planForDay(state, dayN){
+  // 固定排程：computePlan 与进度无关、结果确定，无需缓存
+  return computePlan(state.items, dayN);
+}
+function coreTotalMin(){ return CORE_ALL.reduce(function(s, id){ return s + V[id].min; }, 0); }
+function coreDoneMin(items){ return CORE_ALL.reduce(function(s, id){ return s + (items[id] ? V[id].min : 0); }, 0); }
+function remainingCoreMin(items){ return CORE_ALL.reduce(function(s, id){ return s + (items[id] ? 0 : V[id].min); }, 0); }
+function paceOf(state){
+  var dayN = clamp(dayIndex(state.start), 1, 30);
+  var daysNeeded = Math.ceil(remainingCoreMin(state.items) / 270);
+  var daysLeft = 31 - dayN;
+  var surplus = daysLeft - daysNeeded;
+  if (surplus >= 2) return {p: 'ahead', days: surplus};
+  if (surplus <= -1) return {p: 'behind', days: -surplus};
+  return {p: 'on', days: 0};
+}
+function estDaysLeft(state){
+  var plan = computePlan(state.items, clamp(dayIndex(state.start), 1, 30));
+  var maxDay = 0; Object.keys(plan.days).forEach(function(k){ maxDay = Math.max(maxDay, +k); });
+  if (plan.overflow.length) return '超30天·需压缩';
+  return '约 ' + Math.max(1, maxDay - clamp(dayIndex(state.start), 1, 30) + 1) + ' 天';
+}
+function streakOf(state){
+  var dates=[], cur=addDays(state.start,0), end=today();
+  while(cur<=end){ dates.push(cur); cur=addDays(cur,1); }
+  var streak=0, used=0;
+  for(var i=dates.length-1;i>=0;i--){
+    var d=dates[i];
+    if(d===today() && !(state.checkins[d]||0)) continue;
+    if((state.checkins[d]||0)>0){ streak++; }
+    else if(used<state.forgiven){ used++; }
+    else break;
+  }
+  return streak;
+}
+function milestonesOf(state){
+  function chDone(ch, withEx){
+    var ok=true;
+    Object.keys(V).forEach(function(id){
+      var d=V[id];
+      if(d.ch===ch && d.kind==='v' && !state.items[id]) ok=false;
+      if(withEx && d.ch===ch && d.kind==='x' && d.tier==='b' && !state.items[id]) ok=false;
+    });
+    return ok;
+  }
+  var cpp = ['c04','c05','c06','c07'].every(function(ch){ return chDone(ch,true); });
+  var vv  = ['v01','v02','v03','v04','v05'].every(function(ch){ return chDone(ch,true); });
+  var full = streakOf(state)>=30;
+  var e6 = state.items['e6a'] && state.items['e6b'];
+  return {cpp_done:cpp, v_done:vv, full:full, e6_done:e6};
+}
+function currentStage(state){
+  for(var i=0;i<CORE_ORDER.length;i++){
+    var id=CORE_ORDER[i];
+    if(!state.items[id] && V[id].phase!=='m'){
+      var d=V[id];
+      if(d.ch==='c01'||d.ch==='c02'||d.ch==='c03'){
+        return {ch:'c01', title:'基础补练（c01–c03 练习）', phase:'cpp'};
+      }
+      return {ch:d.ch, title:CH[d.ch]?CH[d.ch].title:('模块'+d.mod), phase:d.phase};
+    }
+  }
+  return {ch:'done', title:'全部完成 🎉', phase:'done'};
+}
+
+// ============ 番茄钟 ============
+var pomo = {run:false, sec:0, timer:null};
+function pomoStart(){ pomo.run=true; pomoBtnLabel(); if(!pomo.timer){ pomo.timer=setInterval(pomoTick,1000);} }
+function pomoStop(){ pomo.run=false; pomoBtnLabel(); }
+function pomoTick(){
+  if(!pomo.run) return;
+  pomo.sec++;
+  state.pomo[today()] = (state.pomo[today()]||0)+1;
+  if(pomo.sec%30===0) save();
+  pomoRender();
+}
+function pomoReset(){ pomoStop(); pomo.sec=0; pomoRender(); }
+function pomoBtnLabel(){ var b=document.getElementById('pomoBtn'); if(b) b.textContent = pomo.run?'暂停':'开始'; }
+function pomoRender(){
+  var el=document.getElementById('pomoTm'); if(!el) return;
+  var left = 25*60-pomo.sec;
+  var mm=String(Math.floor(Math.max(0,left)/60)).padStart(2,'0'), ss=String(Math.max(0,left)%60).padStart(2,'0');
+  el.textContent = mm+':'+ss;
+  el.className = 'tm'+(pomo.run?' run':'');
+  var secs=(state.pomo[today()]||0)+ (pomo.run?pomo.sec:0);
+  var el2=document.getElementById('todayMin'); if(el2) el2.textContent=Math.floor(secs/60);
+  var el3=document.getElementById('pomoBar'); if(el3) el3.style.width=clamp(secs/18000*100,0,100)+'%';
+}
+
+// ============ 复盘 ============
+function reviewLoad(){
+  var n=state.notes[today()]||{};
+  ['rv1','rv2','rv3'].forEach(function(id,i){
+    var el=document.getElementById(id); if(el) el.value=n['q'+(i+1)]||'';
+  });
+}
+function reviewSave(){
+  state.notes[today()]={q1:g('rv1'),q2:g('rv2'),q3:g('rv3')}; save();
+  var m=document.getElementById('rvMsg'); if(m){ m.textContent='已保存 ✓'; setTimeout(function(){m.textContent='';},1500); }
+}
+function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+
+// ============ 渲染 ============
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtMin(m){ return m<60 ? m+'min' : (Math.floor(m/60)+'h'+(m%60? (m%60)+'min':'')); }
+function defBox(id){
+  var d=V[id];
+  if(d.kind==='v') return '<span class="k v">视频</span>'+esc(d.title)+' <span class="mn">'+esc(d.p)+' · '+fmtMin(d.min)+'</span><a class="link" target="_blank" href="'+d.url+'">▶B站</a>';
+  if(d.kind==='x') return '<span class="k x">'+(d.tier==='f'?'进阶':'基础')+'</span>'+esc(d.title)+' <span class="mn">'+fmtMin(d.min)+'</span><span class="acc">✔ '+esc(d.acc)+'</span>';
+  return '<span class="k m">模块</span>'+esc(d.title)+' <span class="mn">'+fmtMin(d.min)+'</span><span class="acc">✔ '+esc(d.acc)+'</span>';
+}
+function cbHtml(id, extra){
+  var d=V[id], done=isDone(id);
+  return '<div class="task'+(done?' done':'')+'" data-id="'+id+'">'+
+    '<input type="checkbox"'+(done?' checked':'')+' onchange="toggle(\''+id+'\')">'+
+    '<span class="t">'+defBox(id)+extra+'</span></div>';
+}
+function cardHtml(id, cardId){
+  if(!cardId) return '';
+  var c=CARDS[cardId]; if(!c) return '';
+  return '<details class="bg"><summary>📖 背景卡：'+esc(c.t)+'</summary><div class="bx">'+esc(c.b)+'</div></details>';
+}
+function chapterHtml(ch){
+  var vs=[], bs=[], fs=[];
+  Object.keys(V).forEach(function(id){
+    var d=V[id];
+    if(d.ch!==ch.id) return;
+    if(d.kind==='v') vs.push(id);
+    else if(d.kind==='x' && d.tier==='b') bs.push(id);
+    else if(d.kind==='x' && d.tier==='f') fs.push(id);
+  });
+  vs.sort(); bs.sort(); fs.sort();
+  var total=vs.length+bs.length, done=0;
+  vs.concat(bs).forEach(function(id){ if(isDone(id)) done++; });
+  var pct= total? Math.round(done/total*100):0;
+  var h='<div class="ch'+(done===total&&total?' open':'')+'" id="ch-'+ch.id+'">'+
+    '<div class="ch-h" onclick="this.parentNode.classList.toggle(\'open\')">'+
+    '<span class="nm">'+esc(ch.title)+'<span class="sub">'+esc(ch.sub)+'</span></span>'+
+    '<span class="cp" style="color:'+(ch.phase==='cpp'?'var(--blue)':'var(--green)')+'">'+done+'/'+total+' · '+pct+'%</span>'+
+    '<span class="ar">▾</span></div>'+
+    '<div class="pbar"><div class="bar"><i class="'+(ch.phase==='cpp'?'b-cpp':'b-v')+'" style="width:'+pct+'%"></i></div></div>'+
+    '<div class="ch-b">';
+  if(vs.length){ h+='<div class="ititle">📺 视频 <span class="n">('+vs.length+')</span></div>'+vs.map(function(id){ return cbHtml(id,''); }).join(''); }
+  if(bs.length){ h+='<div class="ititle">✏️ 基础练习（必做）<span class="n">('+bs.length+')</span></div>'+bs.map(function(id){ return cbHtml(id, cardHtml(id,V[id].card)); }).join(''); }
+  if(fs.length){ h+='<div class="ititle">🚀 进阶练习（加餐·可选）<span class="n">('+fs.length+')</span></div>'+fs.map(function(id){ return cbHtml(id, cardHtml(id,V[id].card)); }).join(''); }
+  return h+'</div></div>';
+}
+function moduleHtml(m){
+  var ids=m.tasks.slice();
+  var done=ids.filter(isDone).length;
+  var prioLabel = m.prio==='core'?'必做':(m.prio==='reco'?'推荐':'弹性');
+  var prioCls = m.prio==='core'?'b-tag':(m.prio==='reco'?'f-tag':'');
+  var h='<div class="ch" id="mod-'+m.id+'"><div class="ch-h" onclick="this.parentNode.classList.toggle(\'open\')">'+
+    '<span class="nm"><span class="'+prioCls+'">'+prioLabel+'</span>'+esc(m.title)+'<span class="sub">'+esc(m.desc)+'</span></span>'+
+    '<span class="cp" style="color:var(--gold)">'+done+'/'+ids.length+'</span><span class="ar">▾</span></div>'+
+    '<div class="ch-b" style="display:block">';
+  ids.forEach(function(id){ h+= cbHtml(id, cardHtml(id,V[id].card)); });
+  return h+'</div></div>';
+}
+function todayHtml(){
+  var dayN = clamp(dayIndex(state.start),1,30);
+  var plan = planForDay(state, dayN);
+  var ids = (plan.days[dayN] || []);
+  var done = ids.filter(isDone).length;
+  var el=document.getElementById('todayList'); if(el){
+    if(!ids.length){
+      el.innerHTML = '<div class="tipbox"><b>🎉 主线任务已全部排完。</b> 剩余时间用于加餐练习、复习与总复习。明日预告见下。</div>';
+    } else {
+      el.innerHTML = ids.map(function(id){ return '<div class="task'+(isDone(id)?' done':'')+'">'+
+        '<input type="checkbox"'+(isDone(id)?' checked':'')+' onchange="toggle(\''+id+'\')">'+
+        '<span class="t">'+defBox(id)+'</span></div>'; }).join('');
+    }
+    // 超额模式：今日全清后，亮出明日任务（超前）+ 加餐池，勾选即计入超额日
+    if(ids.length && done===ids.length){
+      var extras=(plan.days[dayN+1]||[]).slice(0,4);
+      var pool=Object.keys(V).filter(function(id){ return V[id].kind==='x'&&V[id].tier==='f'&&!isDone(id); }).sort();
+      var bonus='<div class="tipbox gold" style="margin-top:10px"><b>🎉 今日任务全部完成，超额模式开启！</b> 多做一项都算超前 —— 明日任务与加餐池随便挑：</div>';
+      if(extras.length){
+        bonus+='<div class="ititle">🚀 超前：明日任务 <span class="n">(选做，计入超额日)</span></div>';
+        bonus+=extras.map(function(id){ return cbHtml(id,'<span class="k a">超前</span>'); }).join('');
+      }
+      if(pool.length){
+        bonus+='<div class="ititle">🍦 加餐池：进阶练习 <span class="n">(可选，带背景卡)</span></div>';
+        bonus+=pool.slice(0,4).map(function(id){ return cbHtml(id,''); }).join('');
+      }
+      el.innerHTML += bonus;
+    }
+  }
+  var e2=document.getElementById('tDone'); if(e2) e2.textContent=done;
+  var e3=document.getElementById('tTotal'); if(e3) e3.textContent=ids.length;
+  var e4=document.getElementById('tPct'); if(e4) e4.textContent= ids.length? Math.round(done/ids.length*100)+'%':'100%';
+  var e5=document.getElementById('todayTag'); if(e5) e5.textContent='Day '+dayN+'/30';
+  var e6=document.getElementById('tomorrowHint');
+  var tom = (plan.days[dayN + 1] || []).slice(0, 3);
+  if(e6) e6.textContent = tom.length ? ('明日预告：'+tom.map(function(id){return V[id].title;}).join('、').slice(0,44)+'…') : '';
+}
+function heroHtml(){
+  var dayN = clamp(dayIndex(state.start),1,30);
+  var st = currentStage(state);
+  var pc = paceOf(state);
+  var ids = (planForDay(state, dayN).days[dayN] || []);
+  var mins = ids.reduce(function(s,id){ return s+V[id].min; },0);
+  var e=document.getElementById('heroDay'); if(e) e.innerHTML=dayN+'<small> / 30</small>';
+  e=document.getElementById('heroStage');
+  if(e) e.innerHTML = st.phase==='done' ? '全部完成 🎉' : '当前：'+esc(st.title)+'';
+  e=document.getElementById('heroPace');
+  if(e){
+    e.className='chip '+(pc.p==='ahead'?'gold':(pc.p==='behind'?'org':'ok'));
+    e.textContent = pc.p==='ahead'?('领先 '+pc.days+' 天'):(pc.p==='behind'?('落后 '+pc.days+' 天'):'节奏正常');
+  }
+  e=document.getElementById('heroTasks');
+  if(e) e.textContent = '今日 '+ids.length+' 项 · 约 '+fmtMin(mins);
+  var daysLeft=31-dayN, daysNeeded=Math.ceil(remainingCoreMin(state.items)/270);
+  var e2=document.getElementById('heroSub');
+  if(e2) e2.innerHTML = st.phase==='done' ? '<b>主线完成！</b> 剩余时间全部用于加餐、复习与开学准备。'
+    : '剩余核心工作量约 <b>'+daysNeeded+' 天</b>，窗口还剩 <b>'+daysLeft+' 天</b> —— 富余 <b>'+Math.max(0,daysLeft-daysNeeded)+' 天</b>用于加餐与复习';
+}
+function overviewHtml(){
+  var all=[]; Object.keys(V).forEach(function(id){ all.push(id); });
+  var total=all.length, done=all.filter(isDone).length;
+  var cpp=all.filter(function(id){ return V[id].phase==='cpp'; }), vv=all.filter(function(id){ return V[id].phase==='v'; });
+  var cDone=cpp.filter(isDone).length, vDone=vv.filter(isDone).length;
+  var g=document.getElementById('gBar'); if(g) g.style.width=(total?Math.round(done/total*100):0)+'%';
+  var e; e=document.getElementById('gDone'); if(e)e.textContent=done; e=document.getElementById('gTotal'); if(e)e.textContent=total;
+  e=document.getElementById('cDone'); if(e)e.textContent=cDone; e=document.getElementById('cTotal'); if(e)e.textContent=cpp.length;
+  e=document.getElementById('vDone'); if(e)e.textContent=vDone; e=document.getElementById('vTotal'); if(e)e.textContent=vv.length;
+  e=document.getElementById('cBar'); if(e)e.style.width=(cpp.length?Math.round(cDone/cpp.length*100):0)+'%';
+  e=document.getElementById('vBar'); if(e)e.style.width=(vv.length?Math.round(vDone/vv.length*100):0)+'%';
+  e=document.getElementById('estDone'); if(e)e.textContent=estDaysLeft(state);
+  e=document.getElementById('paceTag'); if(e)e.textContent = paceOf(state).p==='ahead'?'领先':(paceOf(state).p==='behind'?'追赶':'正常');
+  e=document.getElementById('topDay'); if(e) e.textContent='Day '+clamp(dayIndex(state.start),1,30)+'/30';
+  var gp = total? Math.round(done/total*100):0, cp2 = cpp.length? Math.round(cDone/cpp.length*100):0, vp = vv.length? Math.round(vDone/vv.length*100):0;
+  e=document.getElementById('gPct'); if(e)e.textContent=gp+'%';
+  e=document.getElementById('cPct'); if(e)e.textContent=cp2+'%';
+  e=document.getElementById('vPct'); if(e)e.textContent=vp+'%';
+  e=document.getElementById('topPct'); if(e)e.textContent='全局 '+gp+'%';
+}
+function overHtml(){
+  // 超额账本：勾选数 > 当日计划数的日子 = 超额日；每 2 个超额日解锁一条奖励建议
+  var el=document.getElementById('overBox'); if(!el) return;
+  var plan=computePlan(state.items,1);
+  var dayN=clamp(dayIndex(state.start),1,30);
+  var over=0;
+  for(var i=1;i<dayN;i++){
+    var d=addDays(state.start,i-1);
+    var cnt=state.checkins[d]||0, planned=(plan.days[i]||[]).length;
+    if(cnt>0 && (planned===0 || cnt>planned)) over++;
+  }
+  var rewards=['休息半天（睡个懒觉）','看一场电影/动漫','买个小开发板/一杯奶茶庆祝','和朋友出去玩一天'];
+  var tier=Math.min(Math.floor(over/2), rewards.length);
+  var next = tier<rewards.length ? ('再攒 '+(over%2===0?2:1)+' 个超额日 → 解锁：'+rewards[tier]) : '奖励已全部解锁，你真棒！🎉';
+  el.innerHTML = '<b>⚡ 超额账本：已攒 '+over+' 个超额日</b>（今日任务之外的勾选都算）· 每 2 个兑换一次奖励<br>已解锁：'+
+    (tier>0? rewards.slice(0,tier).join('、') : '暂无')+'　<span style="color:var(--faint)">'+next+'</span>';
+}
+function calHtml(){
+  var el=document.getElementById('cal'); if(!el) return;
+  var plan = computePlan(state.items, 1);
+  var h='';
+  for(var i=0;i<30;i++){
+    var d=addDays(state.start,i);
+    var dayNum=i+1;
+    var cls='c', label=String(dayNum);
+    if(d===today()){ cls='c td'; }
+    else if(d<today()){
+      var cnt=state.checkins[d]||0;
+      var planned=(plan.days[dayNum]||[]).length;
+      var tip=d;
+      if(cnt===0){ cls='c gap'; }
+      else if(planned===0 ? cnt>0 : cnt>planned){ cls='c gold'; label='★'; tip+=' · 超额日（完成 '+cnt+' 项 / 计划 '+planned+' 项）'; }
+      else { cls='c on'; label='✓'; tip+=' · 完成 '+cnt+' 项'; }
+      h+='<div class="'+cls+'" title="'+tip+'">'+label+'</div>';
+      continue;
+    }
+    h+='<div class="'+cls+'" title="'+d+'">'+label+'</div>';
+  }
+  el.innerHTML=h;
+  var e2=document.getElementById('fgLeft'); if(e2) e2.textContent=state.forgiven;
+}
+function msHtml(){
+  var ms=milestonesOf(state);
+  var el=document.getElementById('ms'); if(!el) return;
+  el.innerHTML=DATA.milestones.map(function(m){
+    return '<span class="m'+(ms[m.id]?' got':'')+'">'+(ms[m.id]?'✓ ':'○ ')+esc(m.name)+'</span>';
+  }).join('');
+}
+function schedHtml(){
+  var el=document.getElementById('schedGrid'); if(!el) return;
+  var dayN = clamp(dayIndex(state.start),1,30);
+  var plan = computePlan(state.items, dayN);
+  var h='';
+  for(var i=1;i<=30;i++){
+    var ids = plan.days[i]||[];
+    var label='—', cls='d';
+    if(ids.length){
+      var first=V[ids[0]];
+      if(first.kind==='m'){ label = MODS[first.mod]?MODS[first.mod].title.slice(0,4):'模块'; }
+      else label = SHORT[first.ch]||first.ch;
+      if(ids.length>1) label += '等';
+    } else if(i>dayN){ label='缓冲'; }
+    var d=addDays(state.start,i-1);
+    if(d===today()) cls='d now';
+    else if(d<today()){ cls = state.checkins[d] ? 'd done' : 'd gap'; }
+    h+='<div class="'+cls+'" title="'+d+'：'+(ids.length?ids.length+' 项':'无任务')+'"><b>D'+i+'</b>'+label+'</div>';
+  }
+  el.innerHTML=h;
+}
+function goalsHtml(){
+  var ms=milestonesOf(state);
+  var conds={cpp_done:ms.cpp_done, e6_done:ms.e6_done, v_done:ms.v_done, full:ms.full, main_done:ms.cpp_done&&ms.v_done};
+  var el=document.getElementById('goalsList'); if(!el) return;
+  var got=DATA.goals.filter(function(g){ return conds[g.cond]; }).length;
+  el.innerHTML=DATA.goals.map(function(g){
+    var ok=conds[g.cond];
+    return '<div class="goal'+(ok?' done':'')+'"><span class="ck"></span><span><b>'+esc(g.name)+'：</b>'+esc(g.desc)+'</span></div>';
+  }).join('');
+  var e2=document.getElementById('goalTag'); if(e2) e2.textContent=got+'/'+DATA.goals.length+' 已达成';
+}
+function tipsHtml(){
+  var el=document.getElementById('tipsBox'); if(!el) return;
+  el.innerHTML=DATA.tips.map(function(t,i){
+    var d=!!state.tipsDone[i];
+    return '<div class="tip'+(d?' done':'')+'"><input type="checkbox"'+(d?' checked':'')+' onchange="toggleTip('+i+')"><span><b>'+esc(t.t)+'</b>'+esc(t.b)+'</span></div>';
+  }).join('');
+}
+function cardsHtml(){
+  var el=document.getElementById('cardsBox'); if(!el) return;
+  var keys=['BITCARD','VCARD'];
+  el.innerHTML=keys.map(function(k){
+    var c=CARDS[k]; if(!c) return '';
+    return '<div class="ititle">'+esc(c.t)+'</div><div style="font-size:12.5px;color:var(--muted)">'+esc(c.b)+'</div>';
+  }).join('');
+}
+function render(){
+  todayHtml(); heroHtml(); overviewHtml(); calHtml(); msHtml(); schedHtml(); goalsHtml(); tipsHtml(); cardsHtml(); overHtml();
+  document.getElementById('cppChs').innerHTML = DATA.chapters.filter(function(c){return c.phase==='cpp';}).map(chapterHtml).join('');
+  document.getElementById('vChs').innerHTML = DATA.chapters.filter(function(c){return c.phase==='v';}).map(chapterHtml).join('');
+  document.getElementById('modsBox').innerHTML = DATA.modules.map(moduleHtml).join('');
+  pomoRender();
+  // 今日进度汇总 → 生活全景页同源读取（seu_ic_v5_summary）
+  try{
+    var dn2 = clamp(dayIndex(state.start),1,30);
+    var ids2 = (planForDay(state, dn2).days[dn2] || []);
+    var done2 = ids2.filter(isDone).length;
+    localStorage.setItem('seu_ic_v5_summary', JSON.stringify({date:today(), done:done2, total:ids2.length, pct: ids2.length ? Math.round(done2/ids2.length*100) : 100}));
+  }catch(e){}
+}
+function renderTips(){ tipsHtml(); }
+
+// ============ 目录 scrollspy ============
+function spy(){
+  var secs=['today','overview','schedule','goals','cpp','v','mods','cards','tips','method','school'];
+  function pick(){
+    var best=secs[0], bestY=-1e9;
+    secs.forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      var y=el.getBoundingClientRect().top;
+      if(y<window.innerHeight*0.45 && y>bestY){ bestY=y; best=id; }
+    });
+    var links=document.querySelectorAll('.nav a');
+    for(var i=0;i<links.length;i++){
+      links[i].classList.toggle('active', links[i].getAttribute('data-sec')===best);
+    }
+  }
+  window.addEventListener('scroll', pick, {passive:true});
+  pick();
+}
+
+// ============ 导出/导入 ============
+function exportShow(){ var b=document.getElementById('exportBox'); b.style.display='block'; b.value=JSON.stringify(state); b.select(); }
+function importShow(){ var b=document.getElementById('exportBox'); b.style.display='block'; var s=prompt('粘贴导出的 JSON 进度（将覆盖当前进度）'); if(s){ try{ var p=JSON.parse(s); if(p&&p.v===5){ state=p; ensureState(); save(); render(); alert('导入成功 ✓'); } else alert('格式不对：需要 v5 数据'); }catch(e){ alert('JSON 解析失败'); } } }
+
+// ============ boot ============
+init(); render(); spy();
+document.getElementById('pomoBtn').addEventListener('click', function(){ pomo.run?pomoStop():pomoStart(); });
+document.getElementById('pomoReset').addEventListener('click', pomoReset);
+document.getElementById('rvSave').addEventListener('click', reviewSave);
+document.getElementById('btnExport').addEventListener('click', exportShow);
+document.getElementById('btnImport').addEventListener('click', importShow);
+document.getElementById('btnReset').addEventListener('click', resetAll);
+reviewLoad();
+
+</script>
+</body>
+</html>
