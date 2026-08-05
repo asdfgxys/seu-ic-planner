@@ -184,7 +184,7 @@ ol.list li{padding:2px 0}
 <body>
 
 <header class="topnav">
-  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.12</small></div>
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.13</small></div>
   <nav class="nav" id="navBar">
       <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
       <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
@@ -198,7 +198,7 @@ ol.list li{padding:2px 0}
       <a href="#method" data-sec="method"><span class="dot"></span>学习方法</a>
       <a href="#school" data-sec="school"><span class="dot"></span>开学清单</a>
     </nav>
-  <span class="day" id="topDay">Day 5/30</span>
+  <span class="day" id="topDay">学习第 5 天</span>
   <span class="pct" id="topPct">全局 0%</span>
   <span class="links"><a href="英语四级.html">英语四级</a><a href="生活全景.html">生活全景</a><a href="20天健身蜕变计划.html">健身计划</a></span>
 </header>
@@ -305,7 +305,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="foot">
-      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.12<br>
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.13<br>
       <button class="btn" id="btnExport">导出进度</button>
       <button class="btn" id="btnImport">导入进度</button>
       <button class="btn danger" id="btnReset">重置所有进度</button>
@@ -350,7 +350,7 @@ function init(){
   save();
 }
 function freshState(){
-  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, forgiven:2, tipsDone:{}};
+  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, dayLog:{}, forgiven:2, tipsDone:{}};
   Object.keys(V).forEach(function(id){ if(V[id].done) st.items[id]=true; });
   return st;
 }
@@ -363,13 +363,16 @@ function ensureState(){
   if(!state.tipsDone) state.tipsDone={};
   if(state.forgiven===undefined) state.forgiven=2;
   if(!state.start) state.start=START;
+  if(!state.dayLog) state.dayLog={};
 }
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
 function isDone(id){ return !!state.items[id]; }
 function toggle(id, el){
   state.items[id] = !state.items[id];
-  if(state.items[id]){ state.checkins[today()] = (state.checkins[today()]||0)+1; }
-  else { state.checkins[today()] = Math.max(0,(state.checkins[today()]||0)-1); }
+  var t = today();
+  state.dayLog[t] = state.dayLog[t] || {};
+  if(state.items[id]){ state.checkins[t] = (state.checkins[t]||0)+1; state.dayLog[t][id]=1; }
+  else { state.checkins[t] = Math.max(0,(state.checkins[t]||0)-1); delete state.dayLog[t][id]; }
   save(); render();
 }
 function toggleTip(i){
@@ -432,19 +435,44 @@ function planForDay(state, dayN){
   return computePlan(state.items, dayN);
 }
 function todayShown(state, plan, dayN){
-  // v5.12 自动补位：今日清单 = 基准日任务（排程第 N 天，与预览一致）；
-  // 基准全部完成后自动补入后续天任务（标"超前"），补入天也全清则继续补，直到排程耗尽。
-  var base = plan.days[dayN] || [];
-  if (!base.length) return {base: base, extraDays: [], shown: base};
-  var shown = base.slice();
-  var extraDays = [];
-  var d = dayN + 1;
-  while (d <= 30 && (plan.days[d]||[]).length && shown.every(isDone)) {
-    extraDays.push(d);
-    shown = shown.concat(plan.days[d]);
-    d++;
+  // 兼容占位：v5.13 起今日清单改为 todayShownIds（跟随进度），此处不再使用
+  return {base: [], extraDays: [], shown: []};
+}
+function todayBatch(items){
+  // v5.13 方案 A：今日批次 = 当前未完成任务按课程顺序（CORE_ORDER）贪心填一天预算；
+  // 做完本批后自动进入下一批（跟随真实进度，杜绝"没学过却要做"的任务）。
+  var rem = CORE_ORDER.filter(function(id){ return !items[id]; });
+  var budgetV = 160, budgetX = 130, target = 270;
+  var dv = 0, dx = 0, taken = [], progress = true;
+  while (progress) {
+    progress = false;
+    var cppLeft = rem.some(function(id){ return V[id].phase !== 'v'; });
+    var videosLeft = rem.some(function(id){ return V[id].kind === 'v' && V[id].phase !== 'v'; });
+    for (var i = 0; i < rem.length; i++) {
+      var id = rem[i], d = V[id], m = d.min;
+      if (d.phase === 'v' && cppLeft) continue;
+      if (d.kind === 'v') {
+        if (dv + m <= budgetV && dv + dx + m <= target) { taken.push(id); dv += m; rem.splice(i, 1); progress = true; break; }
+      } else {
+        var xCap = videosLeft ? budgetX : (target - dv);
+        if (dx + m <= xCap && dv + dx + m <= target) { taken.push(id); dx += m; rem.splice(i, 1); progress = true; break; }
+      }
+    }
   }
-  return {base: base, extraDays: extraDays, shown: shown};
+  return taken;
+}
+function todayShownIds(){
+  // 今日清单 = 今天勾选过的（打勾保留）+ 当前批次（未完成），按课程顺序排列
+  var t = today();
+  var batch = todayBatch(state.items);
+  var log = state.dayLog[t] || {};
+  var batchSet = {}; batch.forEach(function(id){ batchSet[id]=1; });
+  var seen = {}, ids = [];
+  CORE_ORDER.concat(Object.keys(log)).forEach(function(id){
+    if(!seen[id] && (log[id] || batchSet[id])){ seen[id]=1; ids.push(id); }
+  });
+  var done = Object.keys(log).filter(isDone).length;
+  return {ids: ids, done: done, total: ids.length, batch: batch, log: log};
 }
 function coreTotalMin(){ return CORE_ALL.reduce(function(s, id){ return s + V[id].min; }, 0); }
 function coreDoneMin(items){ return CORE_ALL.reduce(function(s, id){ return s + (items[id] ? V[id].min : 0); }, 0); }
@@ -603,40 +631,38 @@ function moduleHtml(m){
 }
 function todayHtml(){
   var dayN = clamp(dayIndex(state.start),1,30);
-  var plan = planForDay(state, dayN);
-  var ts = todayShown(state, plan, dayN);
-  var ids = ts.shown;
-  var done = ts.base.filter(isDone).length;
+  var ts = todayShownIds();
+  var ids = ts.ids;
   var el=document.getElementById('todayList'); if(el){
     if(!ids.length){
-      el.innerHTML = '<div class="tipbox"><b>🎉 主线任务已全部排完。</b> 剩余时间用于加餐练习、复习与总复习。明日预告见下。</div>';
+      el.innerHTML = '<div class="tipbox"><b>🎉 主线任务已全部排完。</b> 剩余时间用于加餐练习、复习与总复习。</div>';
     } else {
-      var baseN = ts.base.length;
-      el.innerHTML = ids.map(function(id, idx){
-        var tag = idx >= baseN ? ' <span class="k a">超前</span>' : '';
+      el.innerHTML = ids.map(function(id){
         return '<div class="task'+(isDone(id)?' done':'')+'">'+
           '<input type="checkbox"'+(isDone(id)?' checked':'')+' onchange="toggle(\''+id+'\')">'+
-          '<span class="t">'+defBox(id)+'</span>'+tag+'</div>';
+          '<span class="t">'+defBox(id)+'</span></div>';
       }).join('');
-      if(ts.extraDays.length){
-        el.innerHTML = '<div class="tipbox gold" style="margin-top:10px">🎉 今日基准任务全部完成，已自动补入 <b>'+ts.extraDays.length+' 天</b>的任务（标超前）—— 勾选即算超额，继续冲！</div>' + el.innerHTML;
+      if(ts.batch.length && ts.batch.every(isDone)){
+        el.innerHTML = '<div class="tipbox gold" style="margin-top:10px">🎉 当前批次全部完成，已自动加载下一批任务（跟随你的进度）—— 继续勾选即算超额！</div>' + el.innerHTML;
       }
     }
   }
-  var e2=document.getElementById('tDone'); if(e2) e2.textContent=done;
-  var e3=document.getElementById('tTotal'); if(e3) e3.textContent=ts.base.length;
-  var e4=document.getElementById('tPct'); if(e4) e4.textContent= ts.base.length? Math.round(done/ts.base.length*100)+'%':'100%';
-  var e5=document.getElementById('todayTag'); if(e5) e5.textContent='Day '+dayN+'/30';
+  var e2=document.getElementById('tDone'); if(e2) e2.textContent=ts.done;
+  var e3=document.getElementById('tTotal'); if(e3) e3.textContent=ts.total;
+  var e4=document.getElementById('tPct'); if(e4) e4.textContent= ts.total? Math.round(ts.done/ts.total*100)+'%':'100%';
+  var mainPct = CORE_ORDER.length ? Math.round(CORE_ORDER.filter(isDone).length/CORE_ORDER.length*100) : 100;
+  var e5=document.getElementById('todayTag'); if(e5) e5.textContent='学习第 '+dayN+' 天 · 主线 '+mainPct+'%';
   var e6=document.getElementById('tomorrowHint');
-  var tomDay = ts.extraDays.length ? (ts.extraDays[ts.extraDays.length-1] + 1) : (dayN + 1);
-  var tom = (plan.days[tomDay] || []).slice(0, 3);
-  if(e6) e6.textContent = tom.length ? ('明日预告：'+tom.map(function(id){return V[id].title;}).join('、').slice(0,44)+'…') : '';
+  var simItems = {}; Object.keys(state.items).forEach(function(k){ simItems[k]=true; });
+  ts.batch.forEach(function(id){ simItems[id]=true; });
+  var next = todayBatch(simItems);
+  if(e6) e6.textContent = next.length ? ('下一批预告：'+next.slice(0,3).map(function(id){return V[id].title;}).join('、').slice(0,44)+'…') : '全部任务即将完成 🎉';
 }
 function heroHtml(){
   var dayN = clamp(dayIndex(state.start),1,30);
   var st = currentStage(state);
   var pc = paceOf(state);
-  var ids = todayShown(state, planForDay(state, dayN), dayN).shown;
+  var ids = todayShownIds().ids;
   var mins = ids.reduce(function(s,id){ return s+V[id].min; },0);
   var e=document.getElementById('heroDay'); if(e) e.innerHTML=dayN+'<small> / 30</small>';
   e=document.getElementById('heroStage');
@@ -666,7 +692,7 @@ function overviewHtml(){
   e=document.getElementById('vBar'); if(e)e.style.width=(vv.length?Math.round(vDone/vv.length*100):0)+'%';
   e=document.getElementById('estDone'); if(e)e.textContent=estDaysLeft(state);
   e=document.getElementById('paceTag'); if(e)e.textContent = paceOf(state).p==='ahead'?'领先':(paceOf(state).p==='behind'?'追赶':'正常');
-  e=document.getElementById('topDay'); if(e) e.textContent='Day '+clamp(dayIndex(state.start),1,30)+'/30';
+  e=document.getElementById('topDay'); if(e) e.textContent='学习第 '+clamp(dayIndex(state.start),1,30)+' 天';
   var gp = total? Math.round(done/total*100):0, cp2 = cpp.length? Math.round(cDone/cpp.length*100):0, vp = vv.length? Math.round(vDone/vv.length*100):0;
   e=document.getElementById('gPct'); if(e)e.textContent=gp+'%';
   e=document.getElementById('cPct'); if(e)e.textContent=cp2+'%';
@@ -776,10 +802,8 @@ function render(){
   pomoRender();
   // 今日进度汇总 → 生活全景页同源读取（seu_ic_v5_summary）
   try{
-    var dn2 = clamp(dayIndex(state.start),1,30);
-    var ids2 = (planForDay(state, dn2).days[dn2] || []);
-    var done2 = ids2.filter(isDone).length;
-    localStorage.setItem('seu_ic_v5_summary', JSON.stringify({date:today(), done:done2, total:ids2.length, pct: ids2.length ? Math.round(done2/ids2.length*100) : 100}));
+    var ts3 = todayShownIds();
+    localStorage.setItem('seu_ic_v5_summary', JSON.stringify({date:today(), done:ts3.done, total:ts3.total, pct: ts3.total ? Math.round(ts3.done/ts3.total*100) : 100}));
   }catch(e){}
 }
 function renderTips(){ tipsHtml(); }
