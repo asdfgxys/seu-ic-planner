@@ -184,7 +184,7 @@ ol.list li{padding:2px 0}
 <body>
 
 <header class="topnav">
-  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.11</small></div>
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.12</small></div>
   <nav class="nav" id="navBar">
       <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
       <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
@@ -305,7 +305,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="foot">
-      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.11<br>
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.12<br>
       <button class="btn" id="btnExport">导出进度</button>
       <button class="btn" id="btnImport">导入进度</button>
       <button class="btn danger" id="btnReset">重置所有进度</button>
@@ -415,7 +415,7 @@ function computePlan(items, dayN){
           if (dv + m <= budgetV && dv + dx + m <= target) { taken.push(id); dv += m; rem.splice(i, 1); progress = true; break; }
         } else {
           // 练习上限：常规 130min（与视频搭配）；当日剩余队列已无视频时，
-          // 练习可填满至 target —— 修复"视频耗尽后每天仅 ~2h"的排程缺陷（v5.11）
+          // 练习可填满至 target —— 修复"视频耗尽后每天仅 ~2h"的排程缺陷
           var xCap = videosLeft ? budgetX : (target - dv);
           if (dx + m <= xCap && dv + dx + m <= target) { taken.push(id); dx += m; rem.splice(i, 1); progress = true; break; }
         }
@@ -430,6 +430,21 @@ function computePlan(items, dayN){
 function planForDay(state, dayN){
   // 固定排程：computePlan 与进度无关、结果确定，无需缓存
   return computePlan(state.items, dayN);
+}
+function todayShown(state, plan, dayN){
+  // v5.12 自动补位：今日清单 = 基准日任务（排程第 N 天，与预览一致）；
+  // 基准全部完成后自动补入后续天任务（标"超前"），补入天也全清则继续补，直到排程耗尽。
+  var base = plan.days[dayN] || [];
+  if (!base.length) return {base: base, extraDays: [], shown: base};
+  var shown = base.slice();
+  var extraDays = [];
+  var d = dayN + 1;
+  while (d <= 30 && (plan.days[d]||[]).length && shown.every(isDone)) {
+    extraDays.push(d);
+    shown = shown.concat(plan.days[d]);
+    d++;
+  }
+  return {base: base, extraDays: extraDays, shown: shown};
 }
 function coreTotalMin(){ return CORE_ALL.reduce(function(s, id){ return s + V[id].min; }, 0); }
 function coreDoneMin(items){ return CORE_ALL.reduce(function(s, id){ return s + (items[id] ? V[id].min : 0); }, 0); }
@@ -589,45 +604,39 @@ function moduleHtml(m){
 function todayHtml(){
   var dayN = clamp(dayIndex(state.start),1,30);
   var plan = planForDay(state, dayN);
-  var ids = (plan.days[dayN] || []);
-  var done = ids.filter(isDone).length;
+  var ts = todayShown(state, plan, dayN);
+  var ids = ts.shown;
+  var done = ts.base.filter(isDone).length;
   var el=document.getElementById('todayList'); if(el){
     if(!ids.length){
       el.innerHTML = '<div class="tipbox"><b>🎉 主线任务已全部排完。</b> 剩余时间用于加餐练习、复习与总复习。明日预告见下。</div>';
     } else {
-      el.innerHTML = ids.map(function(id){ return '<div class="task'+(isDone(id)?' done':'')+'">'+
-        '<input type="checkbox"'+(isDone(id)?' checked':'')+' onchange="toggle(\''+id+'\')">'+
-        '<span class="t">'+defBox(id)+'</span></div>'; }).join('');
-    }
-    // 超额模式：今日全清后，亮出明日任务（超前）+ 加餐池，勾选即计入超额日
-    if(ids.length && done===ids.length){
-      var extras=(plan.days[dayN+1]||[]).slice(0,4);
-      var pool=Object.keys(V).filter(function(id){ return V[id].kind==='x'&&V[id].tier==='f'&&!isDone(id); }).sort();
-      var bonus='<div class="tipbox gold" style="margin-top:10px"><b>🎉 今日任务全部完成，超额模式开启！</b> 多做一项都算超前 —— 明日任务与加餐池随便挑：</div>';
-      if(extras.length){
-        bonus+='<div class="ititle">🚀 超前：明日任务 <span class="n">(选做，计入超额日)</span></div>';
-        bonus+=extras.map(function(id){ return cbHtml(id,'<span class="k a">超前</span>'); }).join('');
+      var baseN = ts.base.length;
+      el.innerHTML = ids.map(function(id, idx){
+        var tag = idx >= baseN ? ' <span class="k a">超前</span>' : '';
+        return '<div class="task'+(isDone(id)?' done':'')+'">'+
+          '<input type="checkbox"'+(isDone(id)?' checked':'')+' onchange="toggle(\''+id+'\')">'+
+          '<span class="t">'+defBox(id)+'</span>'+tag+'</div>';
+      }).join('');
+      if(ts.extraDays.length){
+        el.innerHTML = '<div class="tipbox gold" style="margin-top:10px">🎉 今日基准任务全部完成，已自动补入 <b>'+ts.extraDays.length+' 天</b>的任务（标超前）—— 勾选即算超额，继续冲！</div>' + el.innerHTML;
       }
-      if(pool.length){
-        bonus+='<div class="ititle">🍦 加餐池：进阶练习 <span class="n">(可选，带背景卡)</span></div>';
-        bonus+=pool.slice(0,4).map(function(id){ return cbHtml(id,''); }).join('');
-      }
-      el.innerHTML += bonus;
     }
   }
   var e2=document.getElementById('tDone'); if(e2) e2.textContent=done;
-  var e3=document.getElementById('tTotal'); if(e3) e3.textContent=ids.length;
-  var e4=document.getElementById('tPct'); if(e4) e4.textContent= ids.length? Math.round(done/ids.length*100)+'%':'100%';
+  var e3=document.getElementById('tTotal'); if(e3) e3.textContent=ts.base.length;
+  var e4=document.getElementById('tPct'); if(e4) e4.textContent= ts.base.length? Math.round(done/ts.base.length*100)+'%':'100%';
   var e5=document.getElementById('todayTag'); if(e5) e5.textContent='Day '+dayN+'/30';
   var e6=document.getElementById('tomorrowHint');
-  var tom = (plan.days[dayN + 1] || []).slice(0, 3);
+  var tomDay = ts.extraDays.length ? (ts.extraDays[ts.extraDays.length-1] + 1) : (dayN + 1);
+  var tom = (plan.days[tomDay] || []).slice(0, 3);
   if(e6) e6.textContent = tom.length ? ('明日预告：'+tom.map(function(id){return V[id].title;}).join('、').slice(0,44)+'…') : '';
 }
 function heroHtml(){
   var dayN = clamp(dayIndex(state.start),1,30);
   var st = currentStage(state);
   var pc = paceOf(state);
-  var ids = (planForDay(state, dayN).days[dayN] || []);
+  var ids = todayShown(state, planForDay(state, dayN), dayN).shown;
   var mins = ids.reduce(function(s,id){ return s+V[id].min; },0);
   var e=document.getElementById('heroDay'); if(e) e.innerHTML=dayN+'<small> / 30</small>';
   e=document.getElementById('heroStage');
