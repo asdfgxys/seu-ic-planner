@@ -184,7 +184,7 @@ ol.list li{padding:2px 0}
 <body>
 
 <header class="topnav">
-  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.14</small></div>
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.15</small></div>
   <nav class="nav" id="navBar">
       <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
       <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
@@ -205,7 +205,7 @@ ol.list li{padding:2px 0}
 <div class="main">
 
     <div class="hero">
-      <div class="num" id="heroDay">5<small> / 30</small></div>
+      <div class="num" id="heroDay">5<small> 天</small></div>
       <div class="meta">
         <span class="chip hl" id="heroStage">当前：—</span>
         <span class="chip ok" id="heroPace">节奏正常</span>
@@ -215,6 +215,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="card sec-anchor" id="today">
+      <div class="tipbox gold" id="backupTip" style="display:none;margin-bottom:10px">📦 周日数据保险：建议<b>导出进度备份</b>（防缓存/换浏览器丢数据）<button class="btn" style="margin-left:8px;padding:2px 10px" onclick="exportShow()">导出</button></div>
       <h2>今日任务 <span class="tag" id="todayTag"></span></h2>
       <div id="todayList"></div>
       <div class="today-foot"><span>今日完成 <b id="tDone">0</b>/<span id="tTotal">0</span> · <span id="tPct">0%</span></span><span id="tomorrowHint"></span></div>
@@ -251,7 +252,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="card sec-anchor" id="schedule">
-      <h2>30 天排程预览 <span class="tag">随进度动态调整</span></h2>
+      <h2>30 天排程预览 <span class="tag">随进度动态调整</span><span class="n" style="font-weight:400;color:var(--faint);font-size:10px;margin-left:8px">总览=完整课程排程 · 今日=进度跟随</span></h2>
       <div class="sched" id="schedGrid"></div>
       <div class="legend">
         <span><i style="background:var(--green)"></i>已完成</span>
@@ -305,7 +306,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="foot">
-      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.14<br>
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.15<br>
       <button class="btn" id="btnExport">导出进度</button>
       <button class="btn" id="btnImport">导入进度</button>
       <button class="btn danger" id="btnReset">重置所有进度</button>
@@ -350,7 +351,7 @@ function init(){
   save();
 }
 function freshState(){
-  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, dayLog:{}, dayPlan:{}, forgiven:2, tipsDone:{}};
+  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, dayLog:{}, dayPlan:{}, firstAhead:{}, forgiven:2, tipsDone:{}};
   Object.keys(V).forEach(function(id){ if(V[id].done) st.items[id]=true; });
   return st;
 }
@@ -365,6 +366,7 @@ function ensureState(){
   if(!state.start) state.start=START;
   if(!state.dayLog) state.dayLog={};
   if(!state.dayPlan) state.dayPlan={};
+  if(!state.firstAhead) state.firstAhead={};
 }
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
 function isDone(id){ return !!state.items[id]; }
@@ -640,22 +642,38 @@ function moduleHtml(m){
   return h+'</div></div>';
 }
 function todayHtml(){
-  var dayN = clamp(dayIndex(state.start),1,30);
+  var dayN = Math.max(1, dayIndex(state.start));
+  var t = today();
   var ts = todayShownIds();
   var ids = ts.ids;
   var el=document.getElementById('todayList'); if(el){
     if(!ids.length){
       el.innerHTML = '<div class="tipbox"><b>🎉 主线任务已全部排完。</b> 剩余时间用于加餐练习、复习与总复习。</div>';
     } else {
+      var baseSet = {}; ts.base.forEach(function(id){ baseSet[id]=1; });
       var aheadSet = {}; ts.ahead.forEach(function(id){ aheadSet[id]=1; });
-      el.innerHTML = ids.map(function(id){
-        var tag = (aheadSet[id] && !isDone(id)) ? ' <span class="k a">超前</span>' : '';
+      var taskRow = function(id){
         return '<div class="task'+(isDone(id)?' done':'')+'">'+
           '<input type="checkbox"'+(isDone(id)?' checked':'')+' onchange="toggle(\''+id+'\')">'+
-          '<span class="t">'+defBox(id)+'</span>'+tag+'</div>';
-      }).join('');
+          '<span class="t">'+defBox(id)+'</span></div>';
+      };
+      // Q8 分组：今日基准（含今天勾选的加餐）/ 🚀 超前任务
+      var baseIds = ids.filter(function(id){ return !aheadSet[id]; });
+      var aheadIds = ids.filter(function(id){ return aheadSet[id] && !baseSet[id]; });
+      var h = '<div class="ititle">今日基准 <span class="n">('+ts.base.length+' 项 · 勾完即 100%)</span></div>' + baseIds.map(taskRow).join('');
+      if(ts.ahead.length){
+        h += '<div class="ititle" style="margin-top:8px">🚀 超前任务 <span class="n">('+ts.ahead.length+' 项 · 不计入今日达标)</span></div>' + aheadIds.map(taskRow).join('');
+      }
+      el.innerHTML = h;
+      // Q4 提示：基准完成 → 自动填充提示；完成一整批超前 → 休息提示（阈值=基准+首次超前批大小）
       if(ts.base.length && ts.base.every(isDone)){
-        el.innerHTML = '<div class="tipbox gold" style="margin-top:10px">🎉 今日基准任务全部完成！已自动填充下一批（标超前）—— 继续勾选即算超额！</div>' + el.innerHTML;
+        if(!state.firstAhead) state.firstAhead = {};
+        if(state.firstAhead[t] === undefined) state.firstAhead[t] = ts.ahead.length;
+        var checked = Object.keys(ts.log).length;
+        var tip = (checked >= ts.base.length + (state.firstAhead[t]||0))
+          ? '<div class="tipbox gold" style="margin-top:10px">😌 今天已经超额完成一批任务——记得休息！仍可继续勾选（计入超额）。</div>'
+          : '<div class="tipbox gold" style="margin-top:10px">🎉 今日基准任务全部完成！已自动填充下一批（标超前）—— 继续勾选即算超额！</div>';
+        el.innerHTML = tip + el.innerHTML;
       }
     }
   }
@@ -671,12 +689,12 @@ function todayHtml(){
   if(e6) e6.textContent = next.length ? ('下一批预告：'+next.slice(0,3).map(function(id){return V[id].title;}).join('、').slice(0,44)+'…') : '全部任务即将完成 🎉';
 }
 function heroHtml(){
-  var dayN = clamp(dayIndex(state.start),1,30);
+  var dayN = Math.max(1, dayIndex(state.start));
   var st = currentStage(state);
   var pc = paceOf(state);
   var ids = todayShownIds().ids;
   var mins = ids.reduce(function(s,id){ return s+V[id].min; },0);
-  var e=document.getElementById('heroDay'); if(e) e.innerHTML=dayN+'<small> / 30</small>';
+  var e=document.getElementById('heroDay'); if(e) e.innerHTML=dayN+'<small> 天</small>';
   e=document.getElementById('heroStage');
   if(e) e.innerHTML = st.phase==='done' ? '全部完成 🎉' : '当前：'+esc(st.title)+'';
   e=document.getElementById('heroPace');
@@ -685,7 +703,8 @@ function heroHtml(){
     e.textContent = pc.p==='ahead'?('领先 '+pc.days+' 天'):(pc.p==='behind'?('落后 '+pc.days+' 天'):'节奏正常');
   }
   e=document.getElementById('heroTasks');
-  if(e) e.textContent = '今日 '+ids.length+' 项 · 约 '+fmtMin(mins);
+  var tsH = todayShownIds();
+  if(e) e.textContent = '今日基准 '+tsH.base.length+' 项'+(tsH.ahead.length? ' + 超前 '+tsH.ahead.length+' 项':'')+' · 约 '+fmtMin(mins);
   var daysLeft=31-dayN, daysNeeded=Math.ceil(remainingCoreMin(state.items)/270);
   var e2=document.getElementById('heroSub');
   if(e2) e2.innerHTML = st.phase==='done' ? '<b>主线完成！</b> 剩余时间全部用于加餐、复习与开学准备。'
@@ -704,7 +723,7 @@ function overviewHtml(){
   e=document.getElementById('vBar'); if(e)e.style.width=(vv.length?Math.round(vDone/vv.length*100):0)+'%';
   e=document.getElementById('estDone'); if(e)e.textContent=estDaysLeft(state);
   e=document.getElementById('paceTag'); if(e)e.textContent = paceOf(state).p==='ahead'?'领先':(paceOf(state).p==='behind'?'追赶':'正常');
-  e=document.getElementById('topDay'); if(e) e.textContent='学习第 '+clamp(dayIndex(state.start),1,30)+' 天';
+  e=document.getElementById('topDay'); if(e) e.textContent='学习第 '+Math.max(1, dayIndex(state.start))+' 天';
   var gp = total? Math.round(done/total*100):0, cp2 = cpp.length? Math.round(cDone/cpp.length*100):0, vp = vv.length? Math.round(vDone/vv.length*100):0;
   e=document.getElementById('gPct'); if(e)e.textContent=gp+'%';
   e=document.getElementById('cPct'); if(e)e.textContent=cp2+'%';
@@ -812,6 +831,13 @@ function render(){
   document.getElementById('vChs').innerHTML = DATA.chapters.filter(function(c){return c.phase==='v';}).map(chapterHtml).join('');
   document.getElementById('modsBox').innerHTML = DATA.modules.map(moduleHtml).join('');
   pomoRender();
+  // Q7 周日数据保险提醒（每周一次，页面内提示不弹窗）
+  try{
+    if(new Date().getDay()===0 && state.lastBackupTip!==today()){
+      state.lastBackupTip = today(); save();
+      var bt=document.getElementById('backupTip'); if(bt) bt.style.display='block';
+    }
+  }catch(e){}
   // 今日进度汇总 → 生活全景页同源读取（seu_ic_v5_summary）
   try{
     var ts3 = todayShownIds();
