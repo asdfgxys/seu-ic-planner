@@ -36,7 +36,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .blk .bd b{font-size:12.5px}
 .blk .bd .note{font-size:11px;color:var(--muted)}
 .blk .tag{font-size:9.5px;font-weight:800;border-radius:99px;padding:1px 8px;margin-right:5px}
-.tag.eng{color:var(--green);background:#e5f3ec}.tag.learn{color:var(--blue);background:#e8f1f7}.tag.run{color:var(--orange);background:#f8ece2}.tag.rev{color:var(--gold);background:#f7f0e0}
+.tag.eng{color:var(--green);background:#e5f3ec}.tag.learn{color:var(--blue);background:#e8f1f7}.tag.run{color:var(--orange);background:#f8ece2}.tag.rev{color:var(--gold);background:#f7f0e0}.tag.play{color:#6a6fb3;background:#eceef8}
 .blk.done{opacity:.55}.blk.done .bd b{text-decoration:line-through}
 .stage{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--card)}
 .stage.cur{border-color:var(--green);background:#e9f5ef}
@@ -63,7 +63,7 @@ table.rec th{background:var(--card2);font-weight:700}
 </head>
 <body>
 <header class="topnav">
-  <div class="brand">英语四级 · CET-4<small>v1.1 · 青绿清新</small></div>
+  <div class="brand">英语四级 · CET-4<small>v1.2 · 青绿清新</small></div>
   <nav><a href="seu-ic-learning-planner.html">学习计划</a><a class="cur" href="#">英语四级</a><a href="生活全景.html">生活全景</a><a href="20天健身蜕变计划.html">健身计划</a></nav>
 </header>
 <div class="wrap">
@@ -94,7 +94,7 @@ table.rec th{background:var(--card2);font-weight:700}
   <div class="card">
     <h2>真题追踪 <span class="tag">记录套数 · 算总分</span></h2>
     <div class="inrow">
-      <input id="rDate" type="date" value="2026-08-04">
+      <input id="rDate" type="date" value="2026-08-05">
       <input id="rNo" placeholder="第 N 套">
       <input id="rL" placeholder="听力">
       <input id="rR" placeholder="阅读">
@@ -109,10 +109,11 @@ table.rec th{background:var(--card2);font-weight:700}
     <div id="tips"></div>
   </div>
 
-  <div class="foot">英语四级 v1.1 · 数据存于本机浏览器（seu_cet4）· 每日完成度自动同步到生活全景页</div>
+  <div class="foot">英语四级 v1.2 · 数据存于本机浏览器（seu_cet4）· 每日完成度自动同步到生活全景页</div>
 </div>
 <script>
-var DAILY=[{"id": "vocab", "cls": "eng", "tag": "词", "t": "词汇", "n": "40 新词 + 复习 60（间隔复习）"}, {"id": "listen", "cls": "eng", "tag": "听", "t": "听力精听", "n": "30min · 真题听写/跟读"}, {"id": "read", "cls": "learn", "tag": "读", "t": "精读 1 篇", "n": "真题阅读 · 生词入本"}, {"id": "extra", "cls": "run", "tag": "泛", "t": "泛听碎片", "n": "跑步/洗漱时听英文播客"}], STAGES=[{"name": "热身期", "range": "2026-08-04 ~ 08-31", "goal": "词汇第一轮（每日 40 新词 + 间隔复习）· 听力精听入门 · 每日精读 1 篇 · 周末 1 套真题熟悉题型"}, {"name": "提升期", "range": "2026-09-01 ~ 10-31", "goal": "词汇第二轮 + 真题词频 · 分项训练（听力/阅读/写作/翻译）· 每周 2 套分项"}, {"name": "冲刺期", "range": "2026-11-01 ~ 12-18", "goal": "完整套题每周 2 套（计时）· 错题复盘 · 作文模板背诵 · 听力高频场景"}], WEEK=[["周一", "听力专项", "真题听力精听 + 泛听"], ["周二", "阅读专项", "选词/匹配/仔细阅读"], ["周三", "翻译专项", "真题翻译 + 句型积累"], ["周四", "阅读专项", "精读 + 长难句"], ["周五", "听力专项", "新闻听力 + 听写"], ["周六", "写作专项", "作文模板 + 限时写作"], ["周日", "完整套题", "计时 1 套 + 错题复盘"]], TIPS=["听力：播放前抢读选项，锁定关键词（人名/数字/转折词）；精听三步：盲听→看稿→再盲听。", "阅读：选词填空先判词性；段落匹配先读题干划关键词；仔细阅读题干定位原文。", "写作：背 3 套万能模板（现象类/观点类/书信类）+ 高级替换词，字迹工整。", "翻译：直译保底 + 意译加分；地名/机构名提前背熟；长短句结合。", "词汇：利用碎片时间用 APP 刷，重点记高频词与真题词频，不背冷僻词。"];
+var FIXED=[{"id": "vocab", "cls": "eng", "tag": "词", "t": "词汇", "n": "40 新词 + 复习 60（间隔复习）"}, {"id": "listen", "cls": "eng", "tag": "听", "t": "听力精听", "n": "20min · 真题听写/跟读"}, {"id": "extra", "cls": "run", "tag": "泛", "t": "泛听碎片", "n": "跑步/洗漱时听英文播客"}], COURSES=[{"n": 1, "p": 1, "t": "听力专项课-基础夯实-【一-上】2024", "m": 28}, {"n": 2, "p": 2, "t": "听力专项课-基础夯实-【一-下】", "m": 31}, {"n": 3, "p": 3, "t": "听力专项课-基础夯实-【二-上】", "m": 27}, {"n": 4, "p": 4, "t": "听力专项课-基础夯实-【二-下】", "m": 31}, {"n": 5, "p": 5, "t": "听力专项课-基础夯实-【三-上】", "m": 35}, {"n": 6, "p": 6, "t": "听力专项课-基础夯实-【三-下】", "m": 23}, {"n": 7, "p": 7, "t": "听力专项课-基础夯实-【四-上】", "m": 37}, {"n": 8, "p": 8, "t": "听力专项课-基础夯实-【四-下】", "m": 32}, {"n": 9, "p": 9, "t": "听力专项课-基础夯实-【五-上】", "m": 40}, {"n": 10, "p": 10, "t": "听力专项课-基础夯实-【五-下】", "m": 37}, {"n": 11, "p": 11, "t": "听力专项课-基础夯实-【六-上】", "m": 42}, {"n": 12, "p": 12, "t": "听力专项课-基础夯实-【六-下】", "m": 37}, {"n": 13, "p": 13, "t": "听力专项课-基础夯实-【七-上】", "m": 37}, {"n": 14, "p": 14, "t": "听力专项课-基础夯实-【七-下】", "m": 36}, {"n": 15, "p": 15, "t": "听力专项课-基础夯实-【八-上】", "m": 29}, {"n": 16, "p": 16, "t": "听力专项课-基础夯实-【八-下】", "m": 43}, {"n": 17, "p": 57, "t": "听力专项课-能力提升-【一-上】", "m": 33}, {"n": 18, "p": 58, "t": "听力专项课-能力提升-【一-下】", "m": 24}, {"n": 19, "p": 59, "t": "听力专项课-能力提升-【二-上】", "m": 30}, {"n": 20, "p": 60, "t": "听力专项课-能力提升-【二-下】", "m": 27}, {"n": 21, "p": 61, "t": "听力专项课-能力提升-【三-上】", "m": 31}, {"n": 22, "p": 62, "t": "听力专项课-能力提升-【三-下】", "m": 42}, {"n": 23, "p": 63, "t": "听力专项课-能力提升-【四-上】", "m": 35}, {"n": 24, "p": 64, "t": "听力专项课-能力提升-【四-下】", "m": 38}, {"n": 25, "p": 65, "t": "听力专项课-能力提升-【五-上】", "m": 31}, {"n": 26, "p": 66, "t": "听力专项课-能力提升-【五-下】", "m": 40}, {"n": 27, "p": 67, "t": "听力专项课-能力提升-【六-上】", "m": 42}, {"n": 28, "p": 68, "t": "听力专项课-能力提升-【六-下】", "m": 44}, {"n": 29, "p": 69, "t": "听力专项课-能力提升-【七-上】", "m": 34}, {"n": 30, "p": 70, "t": "听力专项课-能力提升-【七-下】", "m": 45}, {"n": 31, "p": 71, "t": "听力专项课-能力提升-【八-上】", "m": 45}, {"n": 32, "p": 72, "t": "听力专项课-能力提升-【八-下】", "m": 40}, {"n": 33, "p": 73, "t": "听力专项课-实战演练-【一-上】", "m": 28}, {"n": 34, "p": 74, "t": "听力专项课-实战演练-【一-下】", "m": 32}, {"n": 35, "p": 75, "t": "听力专项课-实战演练-【二-上】", "m": 32}, {"n": 36, "p": 76, "t": "听力专项课-实战演练-【二-下】", "m": 34}, {"n": 37, "p": 77, "t": "听力专项课-实战演练-【三-上】", "m": 22}, {"n": 38, "p": 78, "t": "听力专项课-实战演练-【三-下】", "m": 34}, {"n": 39, "p": 79, "t": "听力专项课-实战演练-【四-上】", "m": 24}, {"n": 40, "p": 80, "t": "听力专项课-实战演练-【四-下】", "m": 43}, {"n": 41, "p": 81, "t": "听力专项课-实战演练-【五-上】", "m": 37}, {"n": 42, "p": 82, "t": "听力专项课-实战演练-【五-下】", "m": 28}, {"n": 43, "p": 83, "t": "听力专项课-实战演练-【六-上】", "m": 27}, {"n": 44, "p": 84, "t": "听力专项课-实战演练-【六-下】", "m": 35}, {"n": 45, "p": 85, "t": "听力专项课-实战演练-【七-上】", "m": 33}, {"n": 46, "p": 86, "t": "听力专项课-实战演练-【七-下】", "m": 23}, {"n": 47, "p": 87, "t": "听力专项课-实战演练-【八-上】", "m": 26}, {"n": 48, "p": 88, "t": "听力专项课-实战演练-【八-下】", "m": 30}, {"n": 49, "p": 114, "t": "阅读专项课-【课时一】上", "m": 25}, {"n": 50, "p": 115, "t": "阅读专项课-【课时一】下", "m": 27}, {"n": 51, "p": 116, "t": "阅读专项课-【课时二】上", "m": 34}, {"n": 52, "p": 117, "t": "阅读专项课-【课时二】下", "m": 34}, {"n": 53, "p": 118, "t": "阅读专项课-【课时三】上", "m": 39}, {"n": 54, "p": 119, "t": "阅读专项课-【课时三】下", "m": 28}, {"n": 55, "p": 120, "t": "阅读专项课-【课时四】上", "m": 39}, {"n": 56, "p": 121, "t": "阅读专项课-【课时四】下", "m": 41}, {"n": 57, "p": 122, "t": "阅读专项课-【课时五】上", "m": 39}, {"n": 58, "p": 123, "t": "阅读专项课-【课时五】下", "m": 26}, {"n": 59, "p": 124, "t": "阅读专项课-【课时六】上", "m": 29}, {"n": 60, "p": 125, "t": "阅读专项课-【课时六】下", "m": 29}, {"n": 61, "p": 126, "t": "阅读专项课-【课时七】上", "m": 22}, {"n": 62, "p": 127, "t": "阅读专项课-【课时七】下", "m": 15}, {"n": 63, "p": 128, "t": "阅读专项课-【课时八】上", "m": 46}, {"n": 64, "p": 129, "t": "阅读专项课-【课时八】下", "m": 41}, {"n": 65, "p": 130, "t": "阅读专项课-【课时九】上", "m": 37}, {"n": 66, "p": 131, "t": "阅读专项课-【课时九】下", "m": 35}, {"n": 67, "p": 132, "t": "阅读专项课-【课时十】上", "m": 30}, {"n": 68, "p": 133, "t": "阅读专项课-【课时十】下", "m": 36}, {"n": 69, "p": 134, "t": "阅读专项课-【课时十一】上", "m": 37}, {"n": 70, "p": 135, "t": "阅读专项课-【课时十一】下", "m": 35}, {"n": 71, "p": 136, "t": "阅读专项课-【课时十二】上", "m": 31}, {"n": 72, "p": 137, "t": "阅读专项课-【课时十二】下", "m": 31}, {"n": 73, "p": 138, "t": "阅读专项课-【课时十三】上", "m": 30}, {"n": 74, "p": 139, "t": "阅读专项课-【课时十三】下", "m": 31}, {"n": 75, "p": 140, "t": "阅读专项课-【课时十四】上", "m": 24}, {"n": 76, "p": 141, "t": "阅读专项课-【课时十四】下", "m": 24}, {"n": 77, "p": 142, "t": "阅读专项课-【课时十五】上", "m": 20}, {"n": 78, "p": 143, "t": "阅读专项课-【课时十五】下", "m": 20}, {"n": 79, "p": 144, "t": "阅读专项课-【课时十六】上", "m": 31}, {"n": 80, "p": 145, "t": "阅读专项课-【课时十六】下", "m": 30}, {"n": 81, "p": 146, "t": "阅读专项课-【课时十七】上", "m": 29}, {"n": 82, "p": 147, "t": "阅读专项课-【课时十七】下", "m": 33}, {"n": 83, "p": 148, "t": "阅读专项课-【课时十八】上", "m": 39}, {"n": 84, "p": 149, "t": "阅读专项课-【课时十八】下", "m": 31}, {"n": 85, "p": 150, "t": "阅读专项课-【课时十九】上", "m": 38}, {"n": 86, "p": 151, "t": "阅读专项课-【课时十九】下", "m": 29}, {"n": 87, "p": 152, "t": "阅读专项课-【课时二十】上", "m": 33}, {"n": 88, "p": 153, "t": "阅读专项课-【课时二十】下", "m": 30}, {"n": 89, "p": 154, "t": "阅读专项课-【课时二十一】上", "m": 31}, {"n": 90, "p": 155, "t": "阅读专项课-【课时二十一】下", "m": 27}, {"n": 91, "p": 156, "t": "阅读专项课-【课时二十二】", "m": 30}, {"n": 92, "p": 157, "t": "阅读专项课-【课时二十三】", "m": 25}, {"n": 93, "p": 158, "t": "阅读专项课-【课时二十四】上", "m": 30}, {"n": 94, "p": 159, "t": "阅读专项课-【课时二十四】中", "m": 25}, {"n": 95, "p": 160, "t": "阅读专项课-【课时二十四】下", "m": 25}, {"n": 96, "p": 161, "t": "阅读专项课-【课时二十五】上", "m": 27}, {"n": 97, "p": 162, "t": "阅读专项课-【课时二十五】下", "m": 23}, {"n": 98, "p": 89, "t": "写作专项课（一）上", "m": 28}, {"n": 99, "p": 90, "t": "写作专项课（一）下", "m": 27}, {"n": 100, "p": 91, "t": "写作专项课（二）上", "m": 31}, {"n": 101, "p": 92, "t": "写作专项课（二）下", "m": 39}, {"n": 102, "p": 93, "t": "写作专项课（三）上", "m": 38}, {"n": 103, "p": 94, "t": "写作专项课（三）下", "m": 29}, {"n": 104, "p": 95, "t": "写作专项课（四）上", "m": 34}, {"n": 105, "p": 96, "t": "写作专项课（四）下", "m": 35}, {"n": 106, "p": 97, "t": "写作专项课（五）上", "m": 37}, {"n": 107, "p": 98, "t": "写作专项课（五）下", "m": 26}, {"n": 108, "p": 99, "t": "写作专项课（六）上", "m": 23}, {"n": 109, "p": 100, "t": "写作专项课（六）下", "m": 31}, {"n": 110, "p": 101, "t": "写作专项课（七）上", "m": 25}, {"n": 111, "p": 102, "t": "写作专项课（七）下", "m": 29}, {"n": 112, "p": 103, "t": "写作专项课（八）上", "m": 31}, {"n": 113, "p": 104, "t": "写作专项课（八）下", "m": 38}, {"n": 114, "p": 163, "t": "翻译（一）上", "m": 19}, {"n": 115, "p": 164, "t": "翻译（一）中", "m": 19}, {"n": 116, "p": 165, "t": "翻译（一）下", "m": 21}, {"n": 117, "p": 166, "t": "翻译（二）上", "m": 19}, {"n": 118, "p": 167, "t": "翻译（二）中", "m": 21}, {"n": 119, "p": 168, "t": "翻译（二）下", "m": 18}, {"n": 120, "p": 169, "t": "翻译（三）上", "m": 18}, {"n": 121, "p": 170, "t": "翻译（三）中", "m": 17}, {"n": 122, "p": 171, "t": "翻译（三）下", "m": 12}], STAGES=[{"name": "基础期", "range": "2026-08-05 ~ 10-10", "goal": "之了课程主线：听力基础→提升→实战 48 课 + 阅读前半约 18 课 · 词汇 APP 每日 40 新词 + 间隔复习"}, {"name": "强化期", "range": "2026-10-11 ~ 11-10", "goal": "之了课程收尾：阅读剩余 31 课 + 写作 16 课 · 每周 1 套真题（计时）· 分项补弱"}, {"name": "冲刺期", "range": "2026-11-11 ~ 12-19", "goal": "翻译 9 课收官 + 真题每周 2 套计时 · 错题复盘 · 作文模板背诵 · 听力高频场景"}], WEEK=[["周一", "听力专项", "真题听力精听 + 泛听"], ["周二", "阅读专项", "选词/匹配/仔细阅读"], ["周三", "翻译专项", "真题翻译 + 句型积累"], ["周四", "阅读专项", "精读 + 长难句"], ["周五", "听力专项", "新闻听力 + 听写"], ["周六", "写作专项", "作文模板 + 限时写作"], ["周日", "完整套题", "计时 1 套 + 错题复盘"]], TIPS=["听力：播放前抢读选项，锁定关键词（人名/数字/转折词）；精听三步：盲听→看稿→再盲听。", "阅读：选词填空先判词性；段落匹配先读题干划关键词；仔细阅读题干定位原文。", "写作：背 3 套万能模板（现象类/观点类/书信类）+ 高级替换词，字迹工整。", "翻译：直译保底 + 意译加分；地名/机构名提前背熟；长短句结合。", "词汇：利用碎片时间用 APP 刷，重点记高频词与真题词频，不背冷僻词。"];
+var BV='BV1oD4y1N7uH', START='2026-08-05';
 var EXAM='2026-12-19';
 var LS='seu_cet4';
 function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -125,7 +126,16 @@ function toggle(id){var d=dayGet(today());if(d[id])delete d[id];else d[id]=true;
 function daysUntil(ex){var a=new Date(),b=new Date(ex+'T00:00:00');return Math.max(0,Math.ceil((b-a)/86400000));}
 function stageOf(){var t=today(),i=0;for(var k=0;k<STAGES.length;k++){if(t>=STAGES[k].range.slice(0,10))i=k;}return i;}
 function blkHtml(b){var on=isOn(b.id);return '<div class="blk'+(on?' done':'')+'"><input type="checkbox" '+(on?'checked':'')+' onchange="toggle(\''+b.id+'\')"><div class="bd"><b><span class="tag '+b.cls+'">'+b.tag+'</span>'+b.t+'</b><div class="note">'+b.n+'</div></div></div>';}
-function buildTL(){document.getElementById('tl').innerHTML=DAILY.map(blkHtml).join('');var n=DAILY.filter(function(b){return isOn(b.id);}).length;var e=document.getElementById('tDone');if(e)e.textContent=n+'/'+DAILY.length+(n===DAILY.length?' 🎉':'');}
+function daysFrom(start){var a=new Date(start+'T00:00:00'),b=new Date();return Math.floor((b-a)/86400000);}
+function courseOf(){var i=daysFrom(START);return (i>=0&&i<COURSES.length)?COURSES[i]:null;}
+function todayItems(){
+  var items=FIXED.slice();
+  var c=courseOf();
+  if(c)items.unshift({id:'course',cls:'play',tag:'课',t:'之了课程 · '+c.t,
+    n:c.m+'min · <a href="https://www.bilibili.com/video/'+BV+'?p='+c.p+'" target="_blank" style="color:var(--green);font-weight:700">▶ B站 第'+c.p+'集</a>'});
+  return items;
+}
+function buildTL(){var items=todayItems();document.getElementById('tl').innerHTML=items.map(blkHtml).join('');var n=items.filter(function(b){return isOn(b.id);}).length;var e=document.getElementById('tDone');if(e)e.textContent=n+'/'+items.length+(n===items.length?' 🎉':'');}
 function buildStages(){var cur=stageOf();document.getElementById('stages').innerHTML=STAGES.map(function(s,i){return '<div class="stage'+(i===cur?' cur':'')+'"><div class="no">'+(i+1)+'</div><div class="bd"><b>'+s.name+'</b><span class="rng">'+s.range+'</span><div class="goal">'+s.goal+'</div></div></div>';}).join('');}
 function buildGrid(){var h='<div class="grow"></div>'+WEEK.map(function(w){return '<div class="gh">'+w[0]+'</div>';}).join('');var wd=new Date().getDay();var col=wd===0?6:wd-1;WEEK.forEach(function(w,i){h+='<div class="grow">'+w[0]+'</div>';for(var c=0;c<7;c++){var cls='gc'+(c===col?' today':'');h+='<div class="'+cls+'">'+(c===i?'<b>'+w[1]+'</b><div class="sub">'+w[2]+'</div>':'<span class="sub">'+(c<i?'✓':'')+'</span>')+'</div>';}});document.getElementById('grid').innerHTML=h;}
 function buildRec(){
@@ -143,8 +153,9 @@ function hero(){
   var d=dayGet(today());document.getElementById('vocabCount').textContent=d.vocab?40:0;
 }
 function render(){buildTL();buildStages();buildGrid();buildRec();hero();
-  var n=DAILY.filter(function(b){return isOn(b.id);}).length;
-  try{localStorage.setItem('seu_cet4_summary',JSON.stringify({date:today(),done:n,total:DAILY.length,pct:DAILY.length?Math.round(n/DAILY.length*100):100}));}catch(e){}
+  var items=todayItems();
+  var n=items.filter(function(b){return isOn(b.id);}).length;
+  try{localStorage.setItem('seu_cet4_summary',JSON.stringify({date:today(),done:n,total:items.length,pct:items.length?Math.round(n/items.length*100):100}));}catch(e){}
 }
 document.getElementById('btnAdd').onclick=function(){
   var d=document.getElementById('rDate').value||today(),no=document.getElementById('rNo').value||('第'+(state.recs.length+1)+'套');
