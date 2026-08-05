@@ -184,7 +184,7 @@ ol.list li{padding:2px 0}
 <body>
 
 <header class="topnav">
-  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.13</small></div>
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.14</small></div>
   <nav class="nav" id="navBar">
       <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
       <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
@@ -305,7 +305,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="foot">
-      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.13<br>
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.14<br>
       <button class="btn" id="btnExport">导出进度</button>
       <button class="btn" id="btnImport">导入进度</button>
       <button class="btn danger" id="btnReset">重置所有进度</button>
@@ -350,7 +350,7 @@ function init(){
   save();
 }
 function freshState(){
-  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, dayLog:{}, forgiven:2, tipsDone:{}};
+  var st = {v:5, start:START, items:{}, notes:{}, pomo:{}, checkins:{}, dayLog:{}, dayPlan:{}, forgiven:2, tipsDone:{}};
   Object.keys(V).forEach(function(id){ if(V[id].done) st.items[id]=true; });
   return st;
 }
@@ -364,6 +364,7 @@ function ensureState(){
   if(state.forgiven===undefined) state.forgiven=2;
   if(!state.start) state.start=START;
   if(!state.dayLog) state.dayLog={};
+  if(!state.dayPlan) state.dayPlan={};
 }
 function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
 function isDone(id){ return !!state.items[id]; }
@@ -435,11 +436,11 @@ function planForDay(state, dayN){
   return computePlan(state.items, dayN);
 }
 function todayShown(state, plan, dayN){
-  // 兼容占位：v5.13 起今日清单改为 todayShownIds（跟随进度），此处不再使用
+  // 兼容占位：今日清单已改为 todayShownIds（跟随进度），此处不再使用
   return {base: [], extraDays: [], shown: []};
 }
 function todayBatch(items){
-  // v5.13 方案 A：今日批次 = 当前未完成任务按课程顺序（CORE_ORDER）贪心填一天预算；
+  // 今日批次 = 当前未完成任务按课程顺序（CORE_ORDER）贪心填一天预算；
   // 做完本批后自动进入下一批（跟随真实进度，杜绝"没学过却要做"的任务）。
   var rem = CORE_ORDER.filter(function(id){ return !items[id]; });
   var budgetV = 160, budgetX = 130, target = 270;
@@ -462,17 +463,26 @@ function todayBatch(items){
   return taken;
 }
 function todayShownIds(){
-  // 今日清单 = 今天勾选过的（打勾保留）+ 当前批次（未完成），按课程顺序排列
+  // 今日清单 = 今日基准（首次打开时冻结）+ 今天勾选过的（打勾保留）+ 超前任务（基准全清后自动填充，标"超前"）
+  // 完成度 = 基准完成数 / 基准总数：基准勾完即 100%（超前不计入分母，但计入超额账本）
   var t = today();
-  var batch = todayBatch(state.items);
   var log = state.dayLog[t] || {};
-  var batchSet = {}; batch.forEach(function(id){ batchSet[id]=1; });
+  if(!state.dayPlan) state.dayPlan = {};
+  if(!state.dayPlan[t]) state.dayPlan[t] = todayBatch(state.items);
+  var base = state.dayPlan[t];
+  var batch = todayBatch(state.items);
+  var baseSet = {}; base.forEach(function(id){ baseSet[id]=1; });
+  var ahead = batch.filter(function(id){ return !baseSet[id]; });
+  var wanted = {};
+  base.forEach(function(id){ wanted[id]=1; });
+  ahead.forEach(function(id){ wanted[id]=1; });
+  Object.keys(log).forEach(function(id){ wanted[id]=1; });
   var seen = {}, ids = [];
   CORE_ORDER.concat(Object.keys(log)).forEach(function(id){
-    if(!seen[id] && (log[id] || batchSet[id])){ seen[id]=1; ids.push(id); }
+    if(wanted[id] && !seen[id]){ seen[id]=1; ids.push(id); }
   });
-  var done = Object.keys(log).filter(isDone).length;
-  return {ids: ids, done: done, total: ids.length, batch: batch, log: log};
+  var done = base.filter(isDone).length;
+  return {ids: ids, done: done, total: base.length, batch: batch, ahead: ahead, base: base, log: log};
 }
 function coreTotalMin(){ return CORE_ALL.reduce(function(s, id){ return s + V[id].min; }, 0); }
 function coreDoneMin(items){ return CORE_ALL.reduce(function(s, id){ return s + (items[id] ? V[id].min : 0); }, 0); }
@@ -637,13 +647,15 @@ function todayHtml(){
     if(!ids.length){
       el.innerHTML = '<div class="tipbox"><b>🎉 主线任务已全部排完。</b> 剩余时间用于加餐练习、复习与总复习。</div>';
     } else {
+      var aheadSet = {}; ts.ahead.forEach(function(id){ aheadSet[id]=1; });
       el.innerHTML = ids.map(function(id){
+        var tag = (aheadSet[id] && !isDone(id)) ? ' <span class="k a">超前</span>' : '';
         return '<div class="task'+(isDone(id)?' done':'')+'">'+
           '<input type="checkbox"'+(isDone(id)?' checked':'')+' onchange="toggle(\''+id+'\')">'+
-          '<span class="t">'+defBox(id)+'</span></div>';
+          '<span class="t">'+defBox(id)+'</span>'+tag+'</div>';
       }).join('');
-      if(ts.batch.length && ts.batch.every(isDone)){
-        el.innerHTML = '<div class="tipbox gold" style="margin-top:10px">🎉 当前批次全部完成，已自动加载下一批任务（跟随你的进度）—— 继续勾选即算超额！</div>' + el.innerHTML;
+      if(ts.base.length && ts.base.every(isDone)){
+        el.innerHTML = '<div class="tipbox gold" style="margin-top:10px">🎉 今日基准任务全部完成！已自动填充下一批（标超前）—— 继续勾选即算超额！</div>' + el.innerHTML;
       }
     }
   }
