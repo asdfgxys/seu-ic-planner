@@ -184,7 +184,7 @@ ol.list li{padding:2px 0}
 <body>
 
 <header class="topnav">
-  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.9</small></div>
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.10</small></div>
   <nav class="nav" id="navBar">
       <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
       <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
@@ -305,7 +305,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="foot">
-      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.9<br>
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.10<br>
       <button class="btn" id="btnExport">导出进度</button>
       <button class="btn" id="btnImport">导入进度</button>
       <button class="btn danger" id="btnReset">重置所有进度</button>
@@ -397,9 +397,11 @@ var CORE_ALL = CORE_ORDER.concat(Object.keys(V).filter(function(id){
 function computePlan(items, dayN){
   // 固定排程：调度全部核心任务，与个人进度无关 → 预览与实际永远一致；
   // 个人进度只影响勾选状态、统计、节奏与里程碑，不再重排任务。
+  // 排程永远从第 1 天起算：days[dayN] 即真正属于第 N 天的任务
+  // （曾误用 day=dayN 起排，导致 days[dayN] 恒为队列第一批任务 —— v5.10 修复）
   var rem = CORE_ORDER.slice();
   var budgetV = 160, budgetX = 130, target = 270;
-  var days = {}, overflow = [], day = dayN;
+  var days = {}, overflow = [], day = 1;
   while (rem.length && day <= 30) {
     var dv = 0, dx = 0, taken = [], progress = true;
     while (progress) {
