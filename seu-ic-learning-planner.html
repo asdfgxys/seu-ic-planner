@@ -188,7 +188,7 @@ ol.list li{padding:2px 0}
 <body>
 
 <header class="topnav">
-  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.17</small></div>
+  <div class="brand">SEU IC · 30 天冲刺<small>纸张计划本 · v5.18</small></div>
   <nav class="nav" id="navBar">
       <a href="#today" data-sec="today"><span class="dot"></span>今日任务</a>
       <a href="#overview" data-sec="overview"><span class="dot"></span>总览</a>
@@ -312,7 +312,7 @@ ol.list li{padding:2px 0}
     </div>
 
     <div class="foot">
-      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.17<br>
+      进度自动保存在本机浏览器 · 数据迁移自 v4 已自动完成 · 版本 v5.18<br>
       <button class="btn" id="btnExport">导出进度</button>
       <button class="btn" id="btnImport">导入进度</button>
       <button class="btn danger" id="btnReset">重置所有进度</button>
@@ -556,7 +556,10 @@ function todayShownIds(){
   ahead.forEach(function(id){ wanted[id]=1; });
   Object.keys(log).forEach(function(id){ if(id!=='rev') wanted[id]=1; });
   var seen = {}, ids = [];
-  CORE_ORDER.concat(Object.keys(log)).forEach(function(id){
+  // v5.18 修复：清单遍历必须用当前候选池——强化模式下 dayPlan 冻结批次可含 f 档，
+  // 用 CORE_ORDER 遍历会把 f 档全部丢弃 → 今日清单误显示"主线任务已全部排完"
+  var orderPool = (state && state.reviewMode) ? reviewOrder() : CORE_ORDER;
+  orderPool.concat(Object.keys(log)).forEach(function(id){
     if(id==='rev') return;
     if(wanted[id] && !seen[id]){ seen[id]=1; ids.push(id); }
   });
