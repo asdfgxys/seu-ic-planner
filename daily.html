@@ -55,6 +55,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .row.done .t{text-decoration:line-through;color:var(--faint)}
 .row .t{flex:1;min-width:0}
 .row .t .sub{display:block;font-size:11px;color:var(--faint)}
+.row .tcat{font-size:12px;flex-shrink:0}
 .row .x{color:var(--faint);font-size:15px;padding:2px 6px;cursor:pointer;border:none;background:none}
 .empty{text-align:center;padding:20px 12px;color:var(--faint);font-size:13px;background:var(--card);border:1px dashed var(--border2);border-radius:12px;margin-bottom:10px}
 .chip{font-size:10px;font-weight:700;border-radius:5px;padding:1px 7px;flex-shrink:0}
@@ -127,6 +128,10 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 .day-tabs{display:flex;gap:4px;margin-bottom:8px}
 .day-tabs button{flex:1;border:1px solid var(--border2);background:var(--bg);border-radius:8px;padding:6px 0;font-size:12px;color:var(--muted);cursor:pointer}
 .day-tabs button.on{background:var(--forest);border-color:var(--forest);color:#fff}
+.cat-tabs{display:flex;gap:5px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.cat-tabs button{flex-shrink:0;border:1px solid var(--border2);background:var(--card);border-radius:99px;padding:4px 11px;font-size:11.5px;color:var(--muted);cursor:pointer}
+.cat-tabs button.on{background:var(--forest);border-color:var(--forest);color:#fff;font-weight:600}
+.cat-tabs button .cnt{font-family:var(--mono);font-size:10px;opacity:.75}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:120px;background:rgba(38,51,43,.92);color:#fff;font-size:12.5px;padding:8px 18px;border-radius:99px;z-index:80;display:none;max-width:86%}
 </style>
 </style>
@@ -135,7 +140,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 <body data-theme="forest">
 <div class="app">
   <div class="head">
-    <div><div class="ti">🍃 自律日常<span class="ver">v1.0</span></div>
+    <div><div class="ti">🍃 自律日常<span class="ver">v1.1</span></div>
     <div class="date" id="hDate">—</div></div>
     <span class="term" id="hTerm">—</span>
   </div>
@@ -162,6 +167,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
   <div class="view" data-v="todo">
     <div class="sec"><div class="sec-h"><h3>待办</h3><span style="font-size:11px;color:var(--faint)" id="todoCount">0 项</span></div>
       <div class="day-tabs"><button class="on" data-f="all" onclick="setTodoF(this,'all')">全部</button><button data-f="today" onclick="setTodoF(this,'today')">今天</button><button data-f="open" onclick="setTodoF(this,'open')">未完成</button></div>
+      <div class="cat-tabs" id="catTabs"></div>
       <div id="todoList"></div>
     </div>
   </div>
@@ -234,8 +240,9 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 <script>
 
 "use strict";
-var DATA = {"app": "自律日常", "semester": "2026-09-01", "qstart": "2026-07-30", "periods": {"1": "08:00-08:45", "2": "08:55-09:40", "3": "10:00-10:45", "4": "10:55-11:40", "5": "14:00-14:45", "6": "14:55-15:40", "7": "16:00-16:45", "8": "16:55-17:40", "9": "19:00-19:45", "10": "19:55-20:40"}, "quotes": [["Timing is everything in digital design.", "时序是数字设计的全部。"], ["First understand the datasheet, then write the code.", "先读懂数据手册，再写代码。"], ["Small habits, compound interest of life.", "小习惯，是人生的复利。"], ["A clean reset solves half the bugs.", "干净的复位解决一半的 bug。"], ["Always believe a better day.", "永远相信明天会更好。"], ["Synthesis is a conversation with the tool.", "综合，是与工具的对话。"], ["The best way to predict the future is to create it.", "预测未来最好的方式，就是创造它。"], ["Verilog has no magic, only timing.", "Verilog 里没有玄学，只有时序。"], ["Simulate before you synthesize.", "先仿真，再综合。"], ["Every engineer was once a beginner.", "每个工程师都曾是初学者。"], ["Logic is the grammar of hardware.", "逻辑，是硬件的语法。"], ["Stay hungry, stay foolish.", "求知若饥，虚心若愚。"], ["A day of studying is a day of compounding.", "学习一天，复利一天。"], ["The clock is always ticking.", "时钟从不等人。"], ["Debug with your eyes, not your luck.", "用眼睛调试，别靠运气。"], ["Notes taken today are gold tomorrow.", "今天的笔记，是明天的黄金。"], ["Consistency beats intensity.", "持续，胜过突击。"], ["A clean architecture is half the implementation.", "清晰的架构，是成功实现的一半。"], ["Read the code twice, write it once.", "代码读两遍，写一遍。"], ["Sleep is part of the compiler.", "睡眠，是编译流程的一部分。"], ["The simulation passes, the tapeout is forever.", "仿真能过，流片才是永远。"], ["Learn from the waveform, not the guess.", "向波形学习，别向猜测学习。"], ["Discipline is choosing what you want most over what you want now.", "自律，是用最想要的，战胜现在想要的。"], ["Your future self is watching.", "未来的你，正在看着现在的你。"], ["One more P today, one step closer.", "今天多看一个分 P，就离目标近一步。"], ["The register is just a memory with a job.", "寄存器，不过是一段有职责的内存。"], ["Ask the simulator, it never lies.", "去问仿真器，它从不说谎。"], ["Plan the week, execute the day.", "规划一周，执行一天。"], ["Focus is a superpower.", "专注，是一种超能力。"], ["The datasheet is your first teacher.", "数据手册，是你的第一位老师。"], ["Progress, not perfection.", "要进步，不要完美。"], ["A good reset keeps you sane.", "好的复位，让你保持清醒。"], ["Study like the tapeout is tomorrow.", "像明天就要流片一样学习。"], ["The truth is in the timing diagram.", "真相，藏在时序图里。"], ["Every line of code is a decision.", "每一行代码，都是一次决策。"], ["Mornings belong to the disciplined.", "清晨，属于自律的人。"], ["Learn the rules, then break them safely.", "先学会规则，再安全地打破它。"], ["Your streak is your proof.", "你的连击，就是你的证明。"], ["Ask why three times.", "多问三个为什么。"], ["Finish what you start.", "开始的事，就要做完。"]]};
+var DATA = {"app": "自律日常", "semester": "2026-09-01", "qstart": "2026-07-30", "periods": {"1": "08:00-08:45", "2": "08:55-09:40", "3": "10:00-10:45", "4": "10:55-11:40", "5": "14:00-14:45", "6": "14:55-15:40", "7": "16:00-16:45", "8": "16:55-17:40", "9": "19:00-19:45", "10": "19:55-20:40"}, "quotes": [["Timing is everything in digital design.", "时序是数字设计的全部。"], ["First understand the datasheet, then write the code.", "先读懂数据手册，再写代码。"], ["Small habits, compound interest of life.", "小习惯，是人生的复利。"], ["A clean reset solves half the bugs.", "干净的复位解决一半的 bug。"], ["Always believe a better day.", "永远相信明天会更好。"], ["Synthesis is a conversation with the tool.", "综合，是与工具的对话。"], ["The best way to predict the future is to create it.", "预测未来最好的方式，就是创造它。"], ["Verilog has no magic, only timing.", "Verilog 里没有玄学，只有时序。"], ["Simulate before you synthesize.", "先仿真，再综合。"], ["Every engineer was once a beginner.", "每个工程师都曾是初学者。"], ["Logic is the grammar of hardware.", "逻辑，是硬件的语法。"], ["Stay hungry, stay foolish.", "求知若饥，虚心若愚。"], ["A day of studying is a day of compounding.", "学习一天，复利一天。"], ["The clock is always ticking.", "时钟从不等人。"], ["Debug with your eyes, not your luck.", "用眼睛调试，别靠运气。"], ["Notes taken today are gold tomorrow.", "今天的笔记，是明天的黄金。"], ["Consistency beats intensity.", "持续，胜过突击。"], ["A clean architecture is half the implementation.", "清晰的架构，是成功实现的一半。"], ["Read the code twice, write it once.", "代码读两遍，写一遍。"], ["Sleep is part of the compiler.", "睡眠，是编译流程的一部分。"], ["The simulation passes, the tapeout is forever.", "仿真能过，流片才是永远。"], ["Learn from the waveform, not the guess.", "向波形学习，别向猜测学习。"], ["Discipline is choosing what you want most over what you want now.", "自律，是用最想要的，战胜现在想要的。"], ["Your future self is watching.", "未来的你，正在看着现在的你。"], ["One more P today, one step closer.", "今天多看一个分 P，就离目标近一步。"], ["The register is just a memory with a job.", "寄存器，不过是一段有职责的内存。"], ["Ask the simulator, it never lies.", "去问仿真器，它从不说谎。"], ["Plan the week, execute the day.", "规划一周，执行一天。"], ["Focus is a superpower.", "专注，是一种超能力。"], ["The datasheet is your first teacher.", "数据手册，是你的第一位老师。"], ["Progress, not perfection.", "要进步，不要完美。"], ["A good reset keeps you sane.", "好的复位，让你保持清醒。"], ["Study like the tapeout is tomorrow.", "像明天就要流片一样学习。"], ["The truth is in the timing diagram.", "真相，藏在时序图里。"], ["Every line of code is a decision.", "每一行代码，都是一次决策。"], ["Mornings belong to the disciplined.", "清晨，属于自律的人。"], ["Learn the rules, then break them safely.", "先学会规则，再安全地打破它。"], ["Your streak is your proof.", "你的连击，就是你的证明。"], ["Ask why three times.", "多问三个为什么。"], ["Finish what you start.", "开始的事，就要做完。"]], "cats": [{"id": "study", "name": "课业", "ic": "📚"}, {"id": "self", "name": "自学", "ic": "🎯"}, {"id": "eng", "name": "英语", "ic": "🇬🇧"}, {"id": "fit", "name": "锻炼", "ic": "🏃"}, {"id": "life", "name": "生活", "ic": "🏠"}, {"id": "other", "name": "其他", "ic": "📌"}]};
 var STORE = 'seu_daily';
+var CATS = DATA.cats || [{id:'other',name:'其他',ic:'📌'}];
 var THEMES = [
   {id:'forest', name:'森林', c:'#f4f6f1'},
   {id:'paper', name:'纸张', c:'#f5f3ec'},
@@ -255,6 +262,9 @@ function ensure(){
   if(!state.qcustom) state.qcustom=[];
   if(!state.start) state.start=DATA.semester;
   if(!state.theme) state.theme='forest';
+  if(!state.todoF) state.todoF='all';
+  if(!state.todoCat) state.todoCat='all';
+  state.todos.forEach(function(t){ if(!t.cat) t.cat='other'; });
 }
 function load(){
   var s = localStorage.getItem(STORE);
@@ -339,9 +349,14 @@ function todoHtml(todos){
   return '<div class="list">' + todos.map(function(t){
     return '<div class="row'+(t.done?' done':'')+'"><input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleTodo('+t.id+')">'+
       '<span class="chip '+(t.prio==='hi'?'r':(t.prio==='md'?'y':'g'))+'">'+(t.prio==='hi'?'高':(t.prio==='md'?'中':'低'))+'</span>'+
+      '<span class="tcat">'+catIcon(t.cat)+'</span>'+
       '<span class="t">'+esc(t.text)+(t.date?'<span class="sub">'+esc(t.date)+'</span>':'')+'</span>'+
       '<button class="x" onclick="delTodo('+t.id+')">✕</button></div>';
   }).join('') + '</div>';
+}
+function catIcon(id){
+  for(var i=0;i<CATS.length;i++) if(CATS[i].id===id) return CATS[i].ic;
+  return '📌';
 }
 function renderToday(){
   var t = todayStr();
@@ -364,13 +379,29 @@ function renderToday(){
 }
 function renderTodo(){
   var f = state.todoF || 'all';
+  var cat = state.todoCat || 'all';
   var t = todayStr();
   var list = state.todos.slice();
   if(f === 'today') list = list.filter(function(x){ return x.date === t || (!x.date && !x.done); });
   if(f === 'open') list = list.filter(function(x){ return !x.done; });
+  if(cat !== 'all') list = list.filter(function(x){ return x.cat === cat; });
   list.sort(function(a,b){ return (a.done?1:0)-(b.done?1:0) || (a.date||'9999').localeCompare(b.date||'9999'); });
   document.getElementById('todoList').innerHTML = todoHtml(list);
   document.getElementById('todoCount').textContent = state.todos.length + ' 项';
+  // 分类条：各分类数量
+  var counts = {}; CATS.forEach(function(c){ counts[c.id] = 0; });
+  state.todos.forEach(function(td){ if(counts[td.cat] === undefined) counts[td.cat] = 0; counts[td.cat]++; });
+  var html = '<button class="'+(cat==='all'?'on':'')+'" onclick="setTodoCat(this,\'all\')">全部 <span class="cnt">'+state.todos.length+'</span></button>' +
+    CATS.map(function(c){
+      return '<button class="'+(cat===c.id?'on':'')+'" onclick="setTodoCat(this,\''+c.id+'\')">'+c.ic+' '+c.name+' <span class="cnt">'+(counts[c.id]||0)+'</span></button>';
+    }).join('');
+  document.getElementById('catTabs').innerHTML = html;
+}
+function setTodoCat(el, cat){
+  state.todoCat = cat; save();
+  document.querySelectorAll('#catTabs button').forEach(function(b){ b.classList.remove('on'); });
+  el.classList.add('on');
+  renderTodo();
 }
 function renderSched(){
   var grid = document.getElementById('schedGrid');
@@ -431,7 +462,7 @@ function renderHead(){
   }catch(e){}
   try{
     var s3 = JSON.parse(localStorage.getItem('seu_fit_summary')||'null');
-    mini.push('<span>健身 ' + (s3 && s3.date===t ? s3.pct+'%' : '—') + '</span>');
+    mini.push('<span>锻炼 ' + (s3 && s3.date===t ? s3.pct+'%' : '—') + '</span>');
   }catch(e){}
   document.getElementById('miniRow').innerHTML = mini.join('');
   var open = state.todos.filter(function(x){ return !x.done; }).length;
@@ -582,10 +613,17 @@ function openTodoModal(){
   var m = document.getElementById('modal');
   m.innerHTML = '<h3>添加待办</h3>'+
     '<label>内容</label><input type="text" id="tText" placeholder="如：完成数电作业第 3 章">'+
+    '<label>分类</label><div class="seg" id="tCatSeg">' + CATS.map(function(c,i){
+      return '<button class="'+(i===0?'on':'')+'" data-c="'+c.id+'">'+c.ic+' '+c.name+'</button>';
+    }).join('') + '</div>'+
+    '<div style="font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.6">归口：英语学习（四级/词汇/听力）→ 英语类；课程作业 → 课业；课外自学 → 自学</div>'+
     '<label>优先级</label><div class="seg" id="tPrioSeg"><button class="on" data-p="md">中</button><button data-p="hi">高</button><button data-p="lo">低</button></div>'+
     '<label>日期（留空=今天）</label><input type="date" id="tDate">'+
     '<div class="btns"><button class="btn pri" onclick="saveTodo()">保存</button><button class="btn" onclick="closeModal()">取消</button></div>';
   document.getElementById('tDate').value = todayStr();
+  document.querySelectorAll('#tCatSeg button').forEach(function(b){ b.addEventListener('click', function(){
+    document.querySelectorAll('#tCatSeg button').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on');
+  }); });
   document.querySelectorAll('#tPrioSeg button').forEach(function(b){ b.addEventListener('click', function(){
     document.querySelectorAll('#tPrioSeg button').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on');
   }); });
@@ -595,8 +633,9 @@ function saveTodo(){
   var txt = document.getElementById('tText').value.trim();
   if(!txt){ toast('写点什么'); return; }
   var prio = document.querySelector('#tPrioSeg button.on').getAttribute('data-p');
+  var cat = document.querySelector('#tCatSeg button.on').getAttribute('data-c');
   var dt = document.getElementById('tDate').value;
-  state.todos.push({id: todoSeq++, text: txt, prio: prio, date: dt, done: false});
+  state.todos.push({id: todoSeq++, text: txt, prio: prio, cat: cat, date: dt, done: false});
   save(); render(); closeModal();
   toast('已添加 ✓');
 }
@@ -693,7 +732,7 @@ function doImport(){
     if(!p || p.v !== 1) throw 0;
     if(!confirm('导入将合并签到/专注数据，待办与课表以导入内容为准。继续？')) return;
     state = mergeState(state, p);
-    save(); render(); closeModal();
+    ensure(); save(); render(); closeModal();
     toast('导入成功 ✓');
   }catch(e){ toast('JSON 格式不对'); }
 }
