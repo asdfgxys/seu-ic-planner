@@ -140,7 +140,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
 <body data-theme="forest">
 <div class="app">
   <div class="head">
-    <div><div class="ti">🍃 自律日常<span class="ver">v1.1</span></div>
+    <div><div class="ti">🍃 自律日常<span class="ver">v1.2</span></div>
     <div class="date" id="hDate">—</div></div>
     <span class="term" id="hTerm">—</span>
   </div>
@@ -212,6 +212,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang 
       <div class="list">
         <div class="set-row"><span>学期开始</span><span class="l"><input type="date" id="setSem" onchange="setSemester(this.value)" style="border:1px solid var(--border2);border-radius:8px;padding:4px 8px;font-size:12px;background:var(--bg);color:var(--ink)"></span></div>
         <div class="set-row"><span>主题</span><span class="theme-sw" id="themeSw"></span></div>
+        <div class="set-row"><span>四页联动</span><span class="l"><button class="btn sm" id="linkBtn" onclick="toggleLink()">关闭</button></span></div>
         <div class="set-row"><span>数据导出</span><span class="l"><button class="btn sm" onclick="exportData()">导出 JSON</button></span></div>
         <div class="set-row"><span>数据导入</span><span class="l"><button class="btn sm" onclick="openImport()">导入 JSON</button></span></div>
         <div class="set-row"><span>清除本地数据</span><span class="l"><button class="btn sm" style="color:var(--rose);border-color:#e5c8c0" onclick="clearAll()">清除</button></span></div>
@@ -252,7 +253,7 @@ var THEMES = [
 // ============ 状态 ============
 var state = null;
 function fresh(){
-  return {v:1, start:DATA.semester, checkins:{}, focus:{}, todos:[], schedule:[], qcustom:[], theme:'forest', quoteIdx:null};
+  return {v:1, start:DATA.semester, checkins:{}, focus:{}, todos:[], schedule:[], qcustom:[], theme:'forest', quoteIdx:null, linkPages:false};
 }
 function ensure(){
   if(!state.checkins) state.checkins={};
@@ -264,6 +265,7 @@ function ensure(){
   if(!state.theme) state.theme='forest';
   if(!state.todoF) state.todoF='all';
   if(!state.todoCat) state.todoCat='all';
+  if(state.linkPages === undefined) state.linkPages = false;
   state.todos.forEach(function(t){ if(!t.cat) t.cat='other'; });
 }
 function load(){
@@ -433,13 +435,6 @@ function renderStats(){
   }
   box.innerHTML = h;
 }
-function renderSet(){
-  document.getElementById('setSem').value = state.start;
-  var sw = document.getElementById('themeSw');
-  sw.innerHTML = THEMES.map(function(th){
-    return '<button class="'+(state.theme===th.id?'on':'')+'" style="background:'+th.c+'" title="'+th.name+'" onclick="setTheme(\''+th.id+'\')"></button>';
-  }).join('');
-}
 function renderHead(){
   var t = todayStr();
   var d = new Date(t+'T00:00:00');
@@ -450,20 +445,22 @@ function renderHead(){
   else if(dayDiff < 7){ term = '开学第 ' + (dayDiff+1) + ' 天'; }
   else { var wk = Math.floor(dayDiff/7)+1; term = '学期第 ' + wk + ' 周'; }
   document.getElementById('hTerm').textContent = term;
-  // 联动 mini 行
+  // 联动 mini 行（默认关闭；设置里开启后读取四页 summary）
   var mini = ['<span>待办 <b id="mTodo">0/0</b></span>'];
-  try{
-    var s1 = JSON.parse(localStorage.getItem('seu_ic_v5_summary')||'null');
-    mini.push('<span>学习 ' + (s1 && s1.date===t ? s1.pct+'%' : '—') + '</span>');
-  }catch(e){}
-  try{
-    var s2 = JSON.parse(localStorage.getItem('seu_cet4_summary')||'null');
-    mini.push('<span>英语 ' + (s2 && s2.date===t ? s2.pct+'%' : '—') + '</span>');
-  }catch(e){}
-  try{
-    var s3 = JSON.parse(localStorage.getItem('seu_fit_summary')||'null');
-    mini.push('<span>锻炼 ' + (s3 && s3.date===t ? s3.pct+'%' : '—') + '</span>');
-  }catch(e){}
+  if(state.linkPages){
+    try{
+      var s1 = JSON.parse(localStorage.getItem('seu_ic_v5_summary')||'null');
+      mini.push('<span>学习 ' + (s1 && s1.date===t ? s1.pct+'%' : '—') + '</span>');
+    }catch(e){}
+    try{
+      var s2 = JSON.parse(localStorage.getItem('seu_cet4_summary')||'null');
+      mini.push('<span>英语 ' + (s2 && s2.date===t ? s2.pct+'%' : '—') + '</span>');
+    }catch(e){}
+    try{
+      var s3 = JSON.parse(localStorage.getItem('seu_fit_summary')||'null');
+      mini.push('<span>锻炼 ' + (s3 && s3.date===t ? s3.pct+'%' : '—') + '</span>');
+    }catch(e){}
+  }
   document.getElementById('miniRow').innerHTML = mini.join('');
   var open = state.todos.filter(function(x){ return !x.done; }).length;
   document.getElementById('mTodo').textContent = open + '/' + state.todos.length;
@@ -688,6 +685,21 @@ function setTheme(id){
   state.theme = id; save();
   document.body.setAttribute('data-theme', id);
   renderSet();
+}
+function toggleLink(){
+  state.linkPages = !state.linkPages; save();
+  var b = document.getElementById('linkBtn');
+  b.textContent = state.linkPages ? '开启' : '关闭';
+  renderHead();
+  toast(state.linkPages ? '已开启四页联动（读取学习/英语/锻炼进度）' : '已关闭四页联动');
+}
+function renderSet(){
+  document.getElementById('setSem').value = state.start;
+  document.getElementById('linkBtn').textContent = state.linkPages ? '开启' : '关闭';
+  var sw = document.getElementById('themeSw');
+  sw.innerHTML = THEMES.map(function(th){
+    return '<button class="'+(state.theme===th.id?'on':'')+'" style="background:'+th.c+'" title="'+th.name+'" onclick="setTheme(\''+th.id+'\')"></button>';
+  }).join('');
 }
 function setSemester(v){
   state.start = v || DATA.semester; save(); renderHead();
